@@ -14,7 +14,7 @@ class UserDatabaseService(CRUDRepository):
         new_user: User
     ) -> bool:
         try:
-            await session.execute(new_user)
+            await session.add(new_user)
             await session.commit()
             return True
         except Exception as ex:
@@ -29,8 +29,8 @@ class UserDatabaseService(CRUDRepository):
     ) -> Union[bool, User]:
         try:
             stmt = select(User).where(User.id == user_id)
-            sel = await session.execute(stmt)
-            result: Result = sel.one_or_none()
+            sel: Result = await session.execute(stmt)
+            result = sel.one_or_none()
 
             if result:
                 return result[0]
@@ -47,8 +47,8 @@ class UserDatabaseService(CRUDRepository):
     ) -> Union[bool, List]:
         try:
             stmt = select(User)
-            sel = await session.execute(stmt)
-            result: Result = sel.all()
+            sel: Result = await session.execute(stmt)
+            result = sel.all()
 
             if result:
                 return result
@@ -98,8 +98,8 @@ class UserDatabaseService(CRUDRepository):
     ) -> Union[List]:
         try:
             stmt = select(User).options(joinedload(User.history)).where(User.id == user_id)
-            sel = await session.execute(stmt)
-            result: Result = sel.all()
+            sel: Result = await session.execute(stmt)
+            result = sel.all()
 
             if result:
                 return result
@@ -117,8 +117,8 @@ class UserDatabaseService(CRUDRepository):
     ) -> Union[List]:
         try:
             stmt = select(User).options(joinedload(User.reviews)).where(User.id == user_id)
-            sel = await session.execute(stmt)
-            result: Result = sel.all()
+            sel: Result = await session.execute(stmt)
+            result = sel.all()
 
             if result:
                 return result
