@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from app_settings import db_settings
-from db.decl_base import MainBase
-from db.models.UserTable import User
-from db.models.ReviewTable import Review
-from db.models.HistoryTable import History
+from api.db.decl_base import MainBase
+from api.db.models.UserTable import User
+from api.db.models.ReviewTable import Review
+from api.db.models.HistoryTable import History
 
 class DatabaseEngine:
     
@@ -27,7 +27,8 @@ class DatabaseEngine:
         """
         Create all tables
         """
-        
-        MainBase.metadata.create_all(bind=self.async_engine)
+
+        async with self.async_engine.begin() as engine:
+            await engine.run_sync(MainBase.metadata.create_all)
 
 db_worker: DatabaseEngine = DatabaseEngine()

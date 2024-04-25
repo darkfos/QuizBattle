@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, Double, ForeignKey
-from db.decl_base import MainBase
+from api.db.decl_base import MainBase
 
 
 class History(MainBase):

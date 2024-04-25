@@ -8,14 +8,14 @@ load_dotenv()
 class DatabaseSettings:
     
     def __init__(self) -> None:
-        self.__url_db: str = getenv("DATABASE_URL") + getenv("DATABASE_USERNAME") + ":" + getenv("DATABASE_PASSWORD") + "@" + getenv("DATABASE_URL") + ":" + getenv("DATABASE_PORT") + "/" + getenv("DATABASE_NAME")
+        self.__url_db: str = getenv("DATABASE_URL_START") + getenv("DATABASE_USERNAME") + ":" + getenv("DATABASE_PASSWORD") + "@" + getenv("DATABASE_URL") + ":" + getenv("DATABASE_PORT") + "/" + getenv("DATABASE_NAME")
         self.__echo: bool = True
 
     @property
     def url_db(self) -> str: return self.__url_db
 
     @property
-    def echo(self) -> bool: return self.echo
+    def echo(self) -> bool: return self.__echo
 
     @echo.setter
     def echo(self, new_param_for_echo: bool):
