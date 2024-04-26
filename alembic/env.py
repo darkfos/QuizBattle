@@ -20,8 +20,8 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from api.db.decl_base import MainBase
-target_metadata = MainBase.metadata #MetaData
+from api.db.db_engine import MainBase
+target_metadata = MainBase.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

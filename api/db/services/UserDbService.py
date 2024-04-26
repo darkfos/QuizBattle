@@ -14,10 +14,11 @@ class UserDatabaseService(CRUDRepository):
         new_user: User
     ) -> bool:
         try:
-            await session.add(new_user)
+            session.add(new_user)
             await session.commit()
             return True
         except Exception as ex:
+            print(ex)
             return False
         finally:
             await session.close()

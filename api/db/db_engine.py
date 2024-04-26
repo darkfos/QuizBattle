@@ -20,7 +20,7 @@ class DatabaseEngine:
         Return session
         """
 
-        async with self.async_engine.begin() as session:
+        async with self.async_session.begin() as session:
             return session
         
     async def create_tables(self) -> None:

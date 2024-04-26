@@ -39,7 +39,7 @@ async def create_access_token(
 
     #Set cookies
     response.set_cookie(
-        "refresh_token": token.get("refresh_token")
+        refresh_token=token.get("refresh_token")
     )
 
     return response

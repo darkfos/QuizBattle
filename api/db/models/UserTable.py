@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, BigInteger
+from sqlalchemy import String, Integer, BigInteger, Date
+from sqlalchemy.sql import func
 from api.db.decl_base import MainBase
 from datetime import datetime
 from typing import List
@@ -12,11 +13,11 @@ class User(MainBase):
 
     __tablename__ = "user_table"
 
-    telegram_id: Mapped[int] = mapped_column(BigInteger)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     name_user: Mapped[str] = mapped_column(String(500))
     score: Mapped[int] = mapped_column(Integer)
-    date_create: Mapped[datetime]
-    date_update: Mapped[datetime]
+    date_create: Mapped[datetime] = mapped_column(Date)
+    date_update: Mapped[datetime] = mapped_column(Date)
 
     #Link with History
     history: Mapped["History"] = relationship(back_populates="user")
