@@ -4,6 +4,9 @@ from fastapi.security import OAuth2PasswordBearer
 from app_settings import auth_settings
 from datetime import timedelta, datetime
 from typing import Dict
+from api.db.services.UserDbService import UserDatabaseService
+from api.backend.schemas.TokenPDSchema import CreateAccessTokenPDSchema
+from api.backend.exceptions.user_excception import http_400_user_not_found
 
 
 class SecurityAPI:
@@ -13,13 +16,13 @@ class SecurityAPI:
         self.oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
         self.algorithm: str = auth_settings.algorithm
 
-    def create_token(self, tg_id: int, user_id: int) -> dict:
+    async def create_token(self, data_for_token: CreateAccessTokenPDSchema) -> dict:
         """
         Creating access token for user
         """
         
         #Data token
-        data: dict = {"tg_id": tg_id, "user_id": user_id}
+        data: dict = {"tg_id": data_for_token.telegram_id, "user_id": CreateAccessTokenPDSchema.user_id}
         data_for_refresh = data.copy()
 
         #Token operating time
@@ -33,7 +36,7 @@ class SecurityAPI:
 
         return {"token": token, "refresh_token": refresh_token}
     
-    def decode_jwt(self, token: str) -> dict:
+    async def decode_jwt(self, token: str) -> dict:
         """
         Decode jwt token
         """
@@ -47,7 +50,7 @@ class SecurityAPI:
         except JWTError as jwt_error:
             return False
         
-    def create_new_token_with_refresh(self, token: str) -> dict:
+    async def create_new_token_with_refresh(self, token: str) -> dict:
         """
         Create a new token with refresh token
         """
@@ -64,3 +67,18 @@ class SecurityAPI:
             return {"token": new_token}
         except JWTError as jwt_error:
             return False
+        
+    async def user_is_created(self, telegram_id: int) -> int:
+        """
+        Find user
+        """
+
+        try:
+            
+            result = await UserDatabaseService.find_user_by_tg_id(tg_id=telegram_id)
+            
+            if result:
+                return result
+            raise ex
+        except Exception as ex:
+            await http_400_user_not_found()

@@ -128,3 +128,25 @@ class UserDatabaseService(CRUDRepository):
             return False
         finally:
             await session.close()
+
+    @staticmethod
+    async def find_user_by_tg_id(
+        session: AsyncSession,
+        tg_id: int
+    ) -> Union[bool, int]:
+        """
+        Find user by tg_id
+        """
+
+        try:
+            stmt = select(User).where(User.telegram_id == tg_id)
+            sel: Result = await session.execute(stmt)
+            result = sel.one_or_none()
+
+            if result:
+                return result[0].telegram_id
+            raise ex
+        except Exception as ex:
+            return False
+        finally:
+            await session.close()
