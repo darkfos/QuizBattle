@@ -13,13 +13,13 @@ class SecurityAPI:
         self.oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
         self.algorithm: str = auth_settings.algorithm
 
-    def create_token(self, tg_id: int, password: str, user_id: int) -> dict:
+    def create_token(self, tg_id: int, user_id: int) -> dict:
         """
         Creating access token for user
         """
         
         #Data token
-        data: dict = {"tg_id": tg_id, "password": password, "user_id": user_id}
+        data: dict = {"tg_id": tg_id, "user_id": user_id}
         data_for_refresh = data.copy()
 
         #Token operating time
