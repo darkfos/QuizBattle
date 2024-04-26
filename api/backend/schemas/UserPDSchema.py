@@ -1,6 +1,8 @@
 from pydantic import Field, BaseModel
 from typing import Annotated, Union, List
 from datetime import datetime
+from api.backend.schemas.HistoryPDSchema import GetHistoryPDSchema
+from api.backend.schemas.ReviewPDSchema import GetReviewPDSchema
 
 
 class UserBasePDSchema(BaseModel):
@@ -14,13 +16,13 @@ class UserBasePDSchema(BaseModel):
 class UserAndHistoryPDSchema(UserBasePDSchema):
 
     #Add attr
-    histories: List[2]
+    histories: List[GetHistoryPDSchema]
 
 
 class UserAndReviewsPDSchema(UserBasePDSchema):
 
     #Add attr
-    reviews: List[2]
+    reviews: List[GetReviewPDSchema]
 
 
 class AddNewUserPDSchema(UserBasePDSchema):

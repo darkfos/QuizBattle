@@ -8,4 +8,10 @@ class ReviewBasePDSchema(BaseModel):
 
 
 class AddNewReviewPDSchema(ReviewBasePDSchema):
+    
+    #Add attr
+    telegram_id: int
+
+
+class GetReviewPDSchema(ReviewBasePDSchema):
     pass
