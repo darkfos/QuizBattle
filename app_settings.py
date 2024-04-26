@@ -36,6 +36,10 @@ class AuthSettings:
     def __init__(self) -> None:
         self.__key_auth_for_token: str = getenv("TOKEN_KEY")
         self.__key_auth_for_refresh_token: str = getenv("REFRESH_TOKEN_KEY")
+        self.__algorithm: str = getenv("ALGORITHM_HASH")
+        self.__refresh_time: int = getenv("REFRESH_TIME_WORK")
+        self.__token_time: int = getenv("MINUTES_WORK")
+
 
     @property
     def token_key(self) -> str: return self.__key_auth_for_token
@@ -43,6 +47,14 @@ class AuthSettings:
     @property
     def refresh_token_key(self) -> str: return self.__key_auth_for_refresh_token
 
+    @property
+    def algorithm(self) -> str: return self.__algorithm
+
+    @property
+    def refresh_time(self) -> int: return self.__refresh_time
+
+    @property
+    def token_time(self) -> int: return self.__token_time
 
 #Initializating settings
 tg_settings: TelegramSettings = TelegramSettings()
