@@ -6,7 +6,7 @@ from datetime import timedelta, datetime
 from typing import Dict
 from api.db.services.UserDbService import UserDatabaseService
 from api.backend.schemas.TokenPDSchema import CreateAccessTokenPDSchema
-from api.backend.exceptions.user_excception import http_400_user_not_found
+from api.backend.exceptions.user_excception import http_400_user_not_found, http_400_token_not_found
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -47,9 +47,9 @@ class SecurityAPI:
             
             if all(map(lambda x: x != None, data_user.values())):
                 return data_user
-            return False
+            return jwt_error
         except JWTError as jwt_error:
-            return False
+            await http_400_token_not_found()
         
     async def create_new_token_with_refresh(self, token: str) -> dict:
         """

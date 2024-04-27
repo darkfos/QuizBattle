@@ -20,7 +20,7 @@ class User(MainBase):
     date_update: Mapped[datetime] = mapped_column(Date)
 
     #Link with History
-    history: Mapped["History"] = relationship(back_populates="user")
+    history: Mapped[List["History"]] = relationship(back_populates="user")
 
     #Link with all reviews
     reviews: Mapped[List["Review"]] = relationship(back_populates="user")

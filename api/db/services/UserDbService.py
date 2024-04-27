@@ -64,13 +64,14 @@ class UserDatabaseService(CRUDRepository):
     async def update_record(
         session: AsyncSession,
         user_id: int,
-        new_data: ...
+        new_data: dict
     ) -> bool:
         try:
 
             stmt = update(User).where(User.id == user_id).values(**new_data)
             await session.execute(stmt)
             await session.commit()
+            return True
 
         except Exception as ex:
             return False
@@ -145,9 +146,33 @@ class UserDatabaseService(CRUDRepository):
             result = sel.one_or_none()
 
             if result:
-                return result[0].telegram_id
+                return result[0].id
             raise ex
         except Exception as ex:
+            return False
+        finally:
+            await session.close()
+    
+    @staticmethod
+    async def get_full_information(
+        session: AsyncSession,
+        user_id: int
+    ) -> User:
+        
+        try:
+            stmt = select(User).options(
+                joinedload(User.reviews),
+                joinedload(User.history)
+            ).where(User.id == user_id)
+
+            res: Result = (await session.execute(stmt)).unique()
+
+            if res:
+                return res.one()[0]
+            raise ex
+        
+        except Exception as ex:
+            print(ex)
             return False
         finally:
             await session.close()

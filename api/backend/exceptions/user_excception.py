@@ -70,3 +70,13 @@ async def http_400_get_user_info():
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Не удалось получить информацию о пользователе"
     )
+
+async def http_400_token_not_found():
+    """
+    Error with no accept token
+    """
+
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Токен не действителен"
+    )

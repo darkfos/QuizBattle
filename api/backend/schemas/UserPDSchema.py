@@ -13,6 +13,12 @@ class UserBasePDSchema(BaseModel):
     date_update: datetime = Field(default=datetime.now().date())
 
 
+class UserFullInformationPDSchema(UserBasePDSchema):
+
+    reviews: List[GetReviewPDSchema]
+    histories: List[GetHistoryPDSchema]
+
+
 class UserAndHistoryPDSchema(UserBasePDSchema):
 
     #Add attr
@@ -33,17 +39,22 @@ class AddNewUserPDSchema(UserBasePDSchema):
 
 class UpdateUserInfoPDSchema(BaseModel):
 
-    telegram_id: Annotated[int, Field]
+    token: Annotated[str, Field]
     name_user: Annotated[str, Field(max_length=500)]
     date_update: datetime
 
 
 class UpdateUserScorePDSchema(BaseModel):
 
-    telegram_id: Annotated[int, Field()]
+    token: Annotated[int, Field()]
     score: Annotated[int, Field()]
 
 
 class UserIsCreatedPDSchema(BaseModel):
 
     is_created: bool
+
+
+class UserIsUpdated(BaseModel):
+
+    is_updated: bool
