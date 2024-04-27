@@ -1,6 +1,7 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from api.backend.schemas.UserPDSchema import *
+from api.backend.schemas.TokenPDSchema import GetAccessToken
 from api.backend.services.UserService import UserAPIService
 from api.db.db_engine import db_worker
 from typing import Annotated
@@ -71,3 +72,17 @@ async def update_user_info(
     """
 
     return await UserAPIService.update_user(session=session, user_data=user_info)
+
+
+@user_router.delete("/delete_user",
+                    status_code=status.HTTP_202_ACCEPTED,
+                    response_model=UserIsDeletedPDSchema)
+async def delete_user(
+    session: Annotated[AsyncSession, Depends(db_worker.get_session)],
+    token: GetAccessToken
+) -> UserIsDeletedPDSchema:
+    """
+    Delete user
+    """
+    
+    return await UserAPIService.delete_user(session=session, token=token)

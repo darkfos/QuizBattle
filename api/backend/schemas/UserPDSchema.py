@@ -58,3 +58,8 @@ class UserIsCreatedPDSchema(BaseModel):
 class UserIsUpdated(BaseModel):
 
     is_updated: bool
+
+
+class UserIsDeletedPDSchema(BaseModel):
+
+    is_deleted: bool

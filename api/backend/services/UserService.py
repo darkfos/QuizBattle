@@ -2,6 +2,7 @@ from api.backend.exceptions.user_excception import *
 from api.db.services.UserDbService import UserDatabaseService
 from api.db.models.UserTable import User
 from api.backend.schemas.UserPDSchema import *
+from api.backend.schemas.TokenPDSchema import GetAccessToken
 from sqlalchemy.ext.asyncio import AsyncSession
 from api.backend.auth.security import SecurityAPI
 from typing import List, Union
@@ -125,3 +126,19 @@ class UserAPIService:
         )
 
         return UserIsUpdated(is_updated=is_updated)
+
+    @staticmethod
+    async def delete_user(
+        session: AsyncSession,
+        token: GetAccessToken
+    ) -> UserIsDeletedPDSchema:
+        """
+        Delete user
+        """
+
+        #Get user id
+        user_id: int = (await security_app.decode_jwt(token=token.token)).get("user_id")
+        
+        is_deleted: bool = await UserDatabaseService.del_record(session=session, user_id=user_id)
+
+        return UserIsDeletedPDSchema(is_deleted=is_deleted)
