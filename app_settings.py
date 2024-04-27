@@ -37,8 +37,8 @@ class AuthSettings:
         self.__key_auth_for_token: str = getenv("TOKEN_KEY")
         self.__key_auth_for_refresh_token: str = getenv("REFRESH_TOKEN_KEY")
         self.__algorithm: str = getenv("ALGORITHM_HASH")
-        self.__refresh_time: int = getenv("REFRESH_TIME_WORK")
-        self.__token_time: int = getenv("MINUTES_WORK")
+        self.__refresh_time: int = int(getenv("REFRESH_TIME_WORK"))
+        self.__token_time: int = int(getenv("MINUTES_WORK"))
 
 
     @property

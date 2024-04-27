@@ -7,6 +7,7 @@ from typing import Dict
 from api.db.services.UserDbService import UserDatabaseService
 from api.backend.schemas.TokenPDSchema import CreateAccessTokenPDSchema
 from api.backend.exceptions.user_excception import http_400_user_not_found
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class SecurityAPI:
@@ -22,7 +23,7 @@ class SecurityAPI:
         """
         
         #Data token
-        data: dict = {"tg_id": data_for_token.telegram_id, "user_id": CreateAccessTokenPDSchema.user_id}
+        data: dict = {"tg_id": data_for_token.telegram_id, "user_id": data_for_token.user_id}
         data_for_refresh = data.copy()
 
         #Token operating time
@@ -68,14 +69,14 @@ class SecurityAPI:
         except JWTError as jwt_error:
             return False
         
-    async def user_is_created(self, telegram_id: int) -> int:
+    async def user_is_created(self, telegram_id: int, session: AsyncSession) -> int:
         """
         Find user
         """
 
         try:
             
-            result = await UserDatabaseService.find_user_by_tg_id(tg_id=telegram_id)
+            result = await UserDatabaseService.find_user_by_tg_id(session=session, tg_id=telegram_id)
             
             if result:
                 return result

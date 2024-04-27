@@ -28,18 +28,18 @@ async def create_access_token(
     Endpoint for create access token
     """
 
-    user_id: int = await app_security.user_is_created(telegram_id=telegram_id)
+    user_id: int = await app_security.user_is_created(session=session, telegram_id=telegram_id)
     token: dict = await app_security.create_token(
         data_for_token=CreateAccessTokenPDSchema(telegram_id=telegram_id, user_id=user_id)
     )
     acs_token = GetAccessToken(token=token.get("token"))
     response = JSONResponse(
-        content=acs_token
+        content=acs_token.model_dump()
     )
 
     #Set cookies
     response.set_cookie(
-        refresh_token=token.get("refresh_token")
+        key="refresh_token", value=token.get("refresh_token")
     )
 
     return response
@@ -60,7 +60,7 @@ async def create_new_token_with_refresh(
     )
 
     response = JSONResponse(
-        content=GetAccessToken(token=result.get("token"))
+        content=GetAccessToken(token=result.get("token")).model_dump()
     )
 
     return response
