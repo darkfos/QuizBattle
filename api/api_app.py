@@ -7,6 +7,7 @@ from api.backend.routers.auth_router import auth_app_router
 from api.backend.routers.user_router import user_router
 from api.backend.routers.history_router import history_router
 from api.backend.routers.review_router import review_router
+from api.backend.routers.game_router import game_router
 
 
 app: FastAPI = FastAPI(
@@ -32,6 +33,10 @@ app.include_router(
     review_router
 )
 
+app.include_router(
+    game_router
+)
+
 
 @app.get("/", status_code=status.HTTP_100_CONTINUE)
 async def redirect_to_docs():
@@ -43,6 +48,6 @@ def start_api_application():
     uvicorn.run(
         app=app,
         host="127.0.0.1",
-        port="7823",
+        port="7790",
         workers=True
     )
