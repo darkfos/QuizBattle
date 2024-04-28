@@ -47,8 +47,9 @@ class ReviewDatabaseService(CRUDRepository):
         new_record: Review
     ) -> bool:
         try:
-            await session.add(new_record)
+            session.add(new_record)
             await session.commit()
+            return True
         except Exception as ex:
             return False
         finally:
@@ -65,3 +66,23 @@ class ReviewDatabaseService(CRUDRepository):
         session: AsyncSession
     ) -> bool:
         pass
+
+    @staticmethod
+    async def get_all_review_by_user_id(
+        session: AsyncSession,
+        user_id: int
+    ) -> Union[bool, Review]:
+        
+        try:
+            sel = select(Review).where(user_id == user_id)
+            res: Result = await session.execute(sel)
+            res = res.all()
+
+            if res:
+                return res
+            raise ex
+        
+        except Exception as ex:
+            return False
+        finally:
+            await session.close()

@@ -10,8 +10,13 @@ class ReviewBasePDSchema(BaseModel):
 class AddNewReviewPDSchema(ReviewBasePDSchema):
     
     #Add attr
-    telegram_id: int
+    token: str
 
 
 class GetReviewPDSchema(ReviewBasePDSchema):
     pass
+
+
+class ReviewIsCreatedPDSchema(BaseModel):
+
+    is_created: bool

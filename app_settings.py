@@ -25,7 +25,7 @@ class DatabaseSettings:
 class TelegramSettings:
 
     def __init__(self) -> None:
-        self.__token: str = getenv("TELEGRAM_BOT_TOKEN")
+        self.__token: str = getenv("TELEGRAM_TOKEN")
 
     @property
     def token(self) -> str: return self.__token
