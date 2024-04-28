@@ -39,3 +39,31 @@ async def btn_for_profile() -> InlineKeyboardBuilder.as_markup:
     )
 
     return kb_profile.as_markup()
+
+
+async def btn_for_game_country() -> InlineKeyboardBuilder.as_markup:
+    """
+    Return btn builder for game
+    """
+
+    btn_game_country: InlineKeyboardBuilder = InlineKeyboardBuilder()
+
+    btn_game_country.row(
+        InlineKeyboardButton(
+            text="🇬🇧 Английский (Британский)", callback_data="game_england_gmt"
+        )
+    )
+
+    btn_game_country.row(
+        InlineKeyboardButton(
+            text="🇪🇸 Испанский", callback_data="game_spain_gmt"
+        )
+    )
+
+    btn_game_country.row(
+        InlineKeyboardButton(
+            text="🇩🇪 Немецкий", callback_data="game_germany_gmt"
+        )
+    )
+
+    return btn_game_country.as_markup()

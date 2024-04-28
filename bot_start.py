@@ -2,6 +2,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from app_settings import tg_settings
 from bot.handlers.commands import command_router
+from bot.handlers.message import message_router
 from bot.utils.settings.bot_settings import set_commands_for_bot, set_my_description_for_bot
 import asyncio
 
@@ -16,8 +17,9 @@ async def start_bot():
     dp_quiz_bot: Dispatcher = Dispatcher(bot=quiz_battle_bot, storage=memory_storage)
 
     #include routers
-    dp_quiz_bot.include_router(
-        command_router
+    dp_quiz_bot.include_routers(
+        command_router,
+        message_router
     )
 
     #set settings for bot

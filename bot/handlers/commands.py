@@ -7,7 +7,9 @@ from bot.utils.text.command_text import (text_for_start_command,
                                         text_for_help_command,
                                         text_for_profile)
 
-from bot.key.inln_kb import btn_for_profile
+from bot.key.inln_kb import btn_for_profile, btn_for_game_country
+from bot.states.CreateReview import CreateReview
+from bot.states.GameState import Game
 
 
 command_router: Router = Router()
@@ -68,3 +70,37 @@ async def my_profile_command(message: types.Message) -> None:
         parse_mode=ParseMode.HTML,
         reply_markup=await btn_for_profile()
     )
+
+
+@command_router.message(Command("review"))
+async def create_review(message: types.Message, state: FSMContext):
+    """
+    Create review by user
+    """
+
+    await message.answer(text="Ваш запрос принят..\n<b>Пожалуйста введите сообщение для отзыва</b>", parse_mode=ParseMode.HTML)
+    await state.set_state(CreateReview.message)
+
+
+@command_router.message(Command("stats"))
+async def stats_command(message: types.Message, state: FSMContext):
+    """
+    Get stats
+    """
+
+    await message.answer(text="🌍 Мировая <b>статистика</b>: ", parse_mode=ParseMode.HTML)
+
+
+@command_router.message(Command("game"))
+async def game_options(message: types.Message, state: FSMContext):
+    """
+    Send all list game in bot
+    """
+
+    await message.answer(
+        text="🏳 Пожалуйста выберите <b><i>язык</i></b> для игры: ",
+        parse_mode=ParseMode.HTML,
+        reply_markup=await btn_for_game_country()
+    )
+    
+    await state.set_state(Game.language)
