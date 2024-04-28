@@ -13,7 +13,7 @@ class User(MainBase):
 
     __tablename__ = "user_table"
 
-    telegram_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
     name_user: Mapped[str] = mapped_column(String(500))
     score: Mapped[int] = mapped_column(Integer)
     date_create: Mapped[datetime] = mapped_column(Date)
