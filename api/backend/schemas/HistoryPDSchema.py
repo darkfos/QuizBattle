@@ -23,3 +23,8 @@ class GetHistoryPDSchema(HistoryBasePDSchema):
 class HistoryIsCreatedPDSchema(BaseModel):
 
     is_created: bool
+
+
+class HistoryIsDeletedPDSchema(BaseModel):
+
+    is_deleted: bool

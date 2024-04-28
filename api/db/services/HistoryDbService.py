@@ -70,9 +70,35 @@ class HistoryDatabaseService(CRUDRepository):
         history_id: int
     ) -> bool:
         try:
-            del_history = delete(History).where(History.id == history_id)
-            await session.execute(del_history)
-            await session.commit()
+            sel = select(History).where(History.id == history_id)
+            res: Result = await session.execute(sel)
+            res = res.one_or_none()
+            if res:
+                del_history = delete(History).where(History.id == history_id)
+                await session.execute(del_history)
+                await session.commit()
+                return True
+            raise ex
+        except Exception as ex:
+            return False
+        finally:
+            await session.close()
+    
+    @staticmethod
+    async def get_all_histories_by_user_id(
+        session: AsyncSession,
+        user_id: int
+    ) -> History:
+        
+        try:
+            get_all_histories = select(History).where(History.user_id == user_id)
+            res: Result = await session.execute(get_all_histories)
+            res = res.all()
+
+            if res:
+                return res
+            
+            raise ex
         except Exception as ex:
             return False
         finally:
