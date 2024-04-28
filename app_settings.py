@@ -26,6 +26,7 @@ class TelegramSettings:
 
     def __init__(self) -> None:
         self.__token: str = getenv("TELEGRAM_TOKEN")
+        self.api_url: str = getenv("API_URL")
 
     @property
     def token(self) -> str: return self.__token

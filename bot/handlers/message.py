@@ -2,30 +2,30 @@ from aiogram import Router, types
 from aiogram.enums.parse_mode import ParseMode
 from bot.states.CreateReview import CreateReview
 from aiogram.fsm.context import FSMContext
-from bot.states.GameState import Game
+from bot.states.GameState import Game, GameTranslate as GameTranslates, GameSpeed, GameReverseTranslate
+from api.backend.schemas.GamePDSchema import GameTranslate as gm_t
 from bot.filters.IsLanguage import IsLanguageFilter, IsGameModeFilter
 from bot.key.reply_kb import btn_for_game
+from bot.key.inln_kb import generate_btn_for_game_translate
+from bot.req_api.game_api import GameAPI
+from bot.req_api.game_set import gts
 
 
+game = GameAPI()
 message_router: Router = Router()
+        
 
 
-@message_router.message(CreateReview.message)
-async def get_message_review_from_user(
-    message: types.Message,
-    state: FSMContext
-) -> None:
-    """
-    Create review
-    """
-
-    if message.content_type == "text":
-        await state.update_data(message=message.text)
-        await message.answer(text="Отлично, ваш отзыв был сохранён!")
-        await state.clear()
+@message_router.callback_query(lambda message: message.data.endswith("gyp"))
+async def choice_user_continue(clb: types.CallbackQuery, state: FSMContext) -> None:
+    if "yes" in clb.data:
+        game_r = await game.get_words()
+        await clb.message.answer(f"Загаданное слово: <b>{gts.word}</b>", parse_mode=ParseMode.HTML)
+        await state.set_state(GameTranslates.word_translate)
     else:
-        await message.answer(text="Ожидается текст!")
-        await state.set_state(CreateReview.message)
+        await clb.message.delete()
+        await clb.message.answer(text="Игра окончена..")
+        await state.clear()
 
 
 @message_router.callback_query(IsLanguageFilter())
@@ -37,12 +37,14 @@ async def language_sel(message: types.CallbackQuery, state: FSMContext) -> None:
     country_name: str = ""
     match message.data:
         case "game_spain_gmt":
-            country_name = "Испанский"
+            country_name = "es"
         case "game_england_gmt":
-            country_name = "Английский"
+            country_name = "en"
         case "game_germany_gmt":
-            country_name = "Немецкий"
+            country_name = "de"
 
+    #Set country name
+    game.code = country_name
     await state.update_data(language=country_name)
     await state.set_state(Game.game_mode)
     await message.message.answer(
@@ -69,10 +71,21 @@ async def game_mode(message: types.Message, state: FSMContext) -> None:
             game_mode_name = "reverse_translate"
 
     await message.answer(text=f"Отлично, игра начинается {message.from_user.first_name}", reply_markup=types.ReplyKeyboardRemove())
-    await state.update_data(game_mode=game_mode_name)
-    await state.clear()
-    
-    
+
+
+    if game_mode_name == "translate":
+        game_r = await game.get_words()
+        game_state_translate = gm_t(
+            secret_word=game_r.secret_word,
+            translate_in_russo=game_r.translate_in_russo
+        )
+
+        await message.answer(f"Загаданное слово: <b>{game_state_translate.secret_word}</b>", parse_mode=ParseMode.HTML)
+        await state.set_state(GameTranslates.word_translate)
+    elif game_mode_name == "speed_translate":
+        pass
+    elif game_mode_name == "reverse_translate":
+        pass
 
 @message_router.message()
 async def all_other_message(message: types.Message) -> None:

@@ -3,6 +3,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from app_settings import tg_settings
 from bot.handlers.commands import command_router
 from bot.handlers.message import message_router
+from bot.handlers.state_router import state_router
 from bot.utils.settings.bot_settings import set_commands_for_bot, set_my_description_for_bot
 import asyncio
 
@@ -19,6 +20,7 @@ async def start_bot():
     #include routers
     dp_quiz_bot.include_routers(
         command_router,
+        state_router,
         message_router
     )
 

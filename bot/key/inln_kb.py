@@ -67,3 +67,19 @@ async def btn_for_game_country() -> InlineKeyboardBuilder.as_markup:
     )
 
     return btn_game_country.as_markup()
+
+
+async def generate_btn_for_game_translate() -> InlineKeyboardBuilder.as_markup:
+
+    btn_game_y_n: InlineKeyboardBuilder = InlineKeyboardBuilder()
+
+    btn_game_y_n.add(
+        InlineKeyboardButton(
+            text="Да", callback_data="yes_gyp"
+        ),
+        InlineKeyboardButton(
+            text="Нет", callback_data="no_gyp"
+        )
+    )
+
+    return btn_game_y_n.as_markup()

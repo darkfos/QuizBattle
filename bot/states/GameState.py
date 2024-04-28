@@ -3,8 +3,8 @@ from aiogram.fsm.state import State, StatesGroup
 
 class Game(StatesGroup):
 
-    language: str = StatesGroup()
-    game_mode: str = StatesGroup()
+    language: str = State()
+    game_mode: str = State()
 
 
 class GameSpeed(StatesGroup):
@@ -12,7 +12,9 @@ class GameSpeed(StatesGroup):
 
 
 class GameTranslate(StatesGroup):
-    pass
+    
+    word_translate: str = State()
+    continue_or_break: bool = State()
 
 class GameReverseTranslate(StatesGroup):
     pass
