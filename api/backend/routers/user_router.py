@@ -86,3 +86,21 @@ async def delete_user(
     """
     
     return await UserAPIService.delete_user(session=session, token=token)
+
+
+@user_router.patch("/update_user_score",
+                   status_code=status.HTTP_202_ACCEPTED,
+                   response_model=UserIsUpdated)
+async def update_user_score(
+    session: Annotated[AsyncSession, Depends(db_worker.get_session)],
+    user_data: UpdateUserScorePDSchema
+) -> UserIsUpdated:
+    """
+    Update user score
+    """
+
+    return await UserAPIService.update_user(
+        session=session,
+        user_data=user_data,
+        flag=True
+    )

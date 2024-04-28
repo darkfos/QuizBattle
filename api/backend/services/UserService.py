@@ -49,7 +49,6 @@ class UserAPIService:
         #Get user id
         res: dict = await security_app.decode_jwt(token=token)
         user_id: int = res.get("user_id")
-        print(user_id)
 
         user_information: User = await UserDatabaseService.get_one(
             session=session,
@@ -110,20 +109,34 @@ class UserAPIService:
     @staticmethod
     async def update_user(
         session: AsyncSession,
-        user_data: UpdateUserInfoPDSchema
+        user_data: UpdateUserInfoPDSchema,
+        flag: bool = False
     ) -> UserIsUpdated:
         """
         Update information about user
         """
 
         #Get user id
-        user_id: int = (await security_app.decode_jwt(token=user_data.token)).get("user_id")
+        data_from_token: dict = await security_app.decode_jwt(token=user_data.token)
 
-        is_updated: bool = await UserDatabaseService.update_record(
+        await security_app.user_is_created(
             session=session,
-            user_id=user_id,
-            new_data={"name_user": user_data.name_user, "date_update": user_data.date_update}
-        )
+            telegram_id= data_from_token.get("telegram_id")
+            )
+        
+        if flag:
+            is_updated: bool = await UserDatabaseService.update_record(
+                session=session,
+                user_id=data_from_token.get("user_id"),
+                new_data={"score": user_data.score}
+            )
+
+        else:
+            is_updated: bool = await UserDatabaseService.update_record(
+                session=session,
+                user_id=data_from_token.get("user_id"),
+                new_data={"name_user": user_data.name_user, "date_update": user_data.date_update}
+            )
 
         return UserIsUpdated(is_updated=is_updated)
 
@@ -137,8 +150,10 @@ class UserAPIService:
         """
 
         #Get user id
-        user_id: int = (await security_app.decode_jwt(token=token.token)).get("user_id")
+        data_from_token: dict = await security_app.decode_jwt(token=token.token)
         
-        is_deleted: bool = await UserDatabaseService.del_record(session=session, user_id=user_id)
+        await security_app.user_is_created(telegram_id=data_from_token.get("telegram_id"), session=session)
+
+        is_deleted: bool = await UserDatabaseService.del_record(session=session, user_id=data_from_token.get("user_id"))
 
         return UserIsDeletedPDSchema(is_deleted=is_deleted)

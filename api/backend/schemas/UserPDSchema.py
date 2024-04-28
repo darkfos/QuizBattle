@@ -46,7 +46,7 @@ class UpdateUserInfoPDSchema(BaseModel):
 
 class UpdateUserScorePDSchema(BaseModel):
 
-    token: Annotated[int, Field()]
+    token: Annotated[str, Field()]
     score: Annotated[int, Field()]
 
 
