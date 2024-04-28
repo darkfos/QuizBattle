@@ -11,8 +11,15 @@ class HistoryBasePDSchema(BaseModel):
 
 
 class AddNewHistoryPDSchema(HistoryBasePDSchema):
-    pass
+    
+    #Add attr
+    token: Annotated[str, Field()]
 
 
 class GetHistoryPDSchema(HistoryBasePDSchema):
     pass
+
+
+class HistoryIsCreatedPDSchema(BaseModel):
+
+    is_created: bool

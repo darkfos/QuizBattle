@@ -5,6 +5,7 @@ import uvicorn
 #Routers
 from api.backend.routers.auth_router import auth_app_router
 from api.backend.routers.user_router import user_router
+from api.backend.routers.history_router import history_router
 
 
 app: FastAPI = FastAPI(
@@ -17,8 +18,13 @@ app: FastAPI = FastAPI(
 app.include_router(
     auth_app_router
 )
+
 app.include_router(
     user_router
+)
+
+app.include_router(
+    history_router
 )
 
 

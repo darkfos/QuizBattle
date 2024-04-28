@@ -14,7 +14,7 @@ class HistoryDatabaseService(CRUDRepository):
         new_history: History
     ) -> bool:
         try:
-            await session.add(new_history)
+            session.add(new_history)
             await session.commit()
             return True
         except Exception as ex:

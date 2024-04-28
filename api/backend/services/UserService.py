@@ -121,7 +121,7 @@ class UserAPIService:
 
         await security_app.user_is_created(
             session=session,
-            telegram_id= data_from_token.get("telegram_id")
+            telegram_id= data_from_token.get("tg_id")
             )
         
         if flag:
@@ -152,7 +152,7 @@ class UserAPIService:
         #Get user id
         data_from_token: dict = await security_app.decode_jwt(token=token.token)
         
-        await security_app.user_is_created(telegram_id=data_from_token.get("telegram_id"), session=session)
+        await security_app.user_is_created(telegram_id=data_from_token.get("tg_id"), session=session)
 
         is_deleted: bool = await UserDatabaseService.del_record(session=session, user_id=data_from_token.get("user_id"))
 
