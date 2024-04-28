@@ -18,7 +18,7 @@ class UserApi:
 
         result = self.session_req.post(
             url=self.url+"user/create_user",
-            data=user_data
+            data=user_data.model_dump_json()
             )
         
         if result.status_code == 201:
@@ -44,7 +44,7 @@ class UserApi:
         else:
             return False
         
-    async def generate_new_token(self, token: str) -> None
+    async def generate_new_token(self, token: str) -> None:
         """
         Generate new token with help refresh_token
         """
@@ -60,3 +60,49 @@ class UserApi:
             user_auth_set.token = dict(result.json()).get("token")
         else:
             return "Не удалось получить новый token"
+    
+    async def get_user_info(self) -> None:
+        """
+        Get user info
+        """
+
+        try:
+            result = self.session_req.get(
+                url=self.url+"user/about_me",
+                params={"token": user_auth_set.token}
+            )
+
+            if result.status_code == 200:
+                return dict(result.json())
+            else:
+                raise ex
+            
+        except Exception as ex:
+            await self.generate_new_token(token=user_auth_set.refresh_token)
+            await self.get_user_info()
+
+    async def update_user_score(self, score: int) -> None:
+        """
+        Update user score
+        """
+
+        try:
+            result = self.session_req.patch(
+                url=self.url+"user/update_user_score",
+                data={
+                    "token": user_auth_set.token,
+                    "score": score
+                }
+            )
+
+            if result.status_code == 202:
+                res = dict(result.json())
+
+                if res.get("is_updated") == True:
+                    pass
+                else:
+                    raise ex
+                
+        except Exception as ex:
+            await self.generate_new_token(token=user_auth_set.refresh_token)
+            await self.get_user_info()
