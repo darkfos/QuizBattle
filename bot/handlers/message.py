@@ -40,6 +40,27 @@ async def choice_user_continue(clb: types.CallbackQuery, state: FSMContext) -> N
         await state.clear()
 
 
+@message_router.callback_query(lambda message: message.data.endswith("profbtn"))
+async def chice_profile_btn(
+    clb: types.CallbackQuery,
+    state: FSMContext
+) -> None:
+    if clb.data == "my_history_profbtn":
+        all_my_histories: list = await HistoryApi().get_my_histories()
+
+        count_history = 0
+        if all_my_histories:
+            for history in all_my_histories:
+                await clb.message.answer(
+                    text=f"История <b>№{count_history}</b>\n\n👑 Счет: {history.get('score')}\n✅ Количество верных слов: {history.get('right_word')}\n❌ Количество неверных слов: {history.get('lose_word')}\n📝 Коэффицент правильности: {history.get('procent_game')}",
+                    parse_mode=ParseMode.HTML
+                )
+                count_history += 1
+        else:
+            await clb.message.answer(
+                text="У вас отсутствует история, нужно это исправить!"
+            )
+
 @message_router.callback_query(IsLanguageFilter())
 async def language_sel(message: types.CallbackQuery, state: FSMContext) -> None:
     """

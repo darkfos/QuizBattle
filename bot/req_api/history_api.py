@@ -3,7 +3,7 @@ from bot.req_api.user_set import user_auth_set
 from api.backend.schemas.HistoryPDSchema import AddNewHistoryPDSchema
 from bot.req_api.user_api import UserApi
 from app_settings import tg_settings
-from typing import Union
+from typing import Union, List
 
 
 class HistoryApi:
@@ -24,6 +24,20 @@ class HistoryApi:
                 return True
             raise ex
         except Exception as ex:
-            await UserApi.generate_new_token()
+            await UserApi().generate_new_token()
             new_history.token = user_auth_set.token
             await self.create_history(new_history=new_history)
+
+    async def get_my_histories(self) -> List:
+        await UserApi().generate_new_token()
+        req = self.session_req.get(
+            url=self.url+"history/all_histories",
+            params={
+                "token": user_auth_set.token
+            }
+        )
+
+        if req.status_code == 200:
+            return req.json()
+        else:
+            return False
