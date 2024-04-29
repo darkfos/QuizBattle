@@ -16,6 +16,9 @@ class AuthUserMiddleware(BaseMiddleware):
         
         user_api: UserApi = UserApi()
 
+        #Get user photo
+        user_photo: str = dict(dict(await event.from_user.get_profile_photos()).get("photos")[0][0]).get("file_id")
+
         user_is_created: bool = await user_api.register_user(
             user_data=AddNewUserPDSchema(
                 name_user=event.from_user.first_name,
@@ -23,7 +26,8 @@ class AuthUserMiddleware(BaseMiddleware):
                 game_count=0,
                 date_create=datetime.now().date(),
                 date_update=datetime.now().date(),
-                telegram_id=int(event.from_user.id)
+                telegram_id=int(event.from_user.id),
+                photo=user_photo
             )
         )
 

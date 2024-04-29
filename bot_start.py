@@ -43,6 +43,7 @@ async def start_bot():
         logging.critical(msg="Бот завершил свою работу")
         await dp_quiz_bot.stop_polling()
 
+
 #middleware for updates
 @dp_quiz_bot.update.outer_middleware()
 async def database_transaction_middleware(
@@ -61,7 +62,8 @@ async def database_transaction_middleware(
                     game_count=0,
                     date_create=datetime.now().date(),
                     date_update=datetime.now().date(),
-                    telegram_id=int(event.callback_query.from_user.id)
+                    telegram_id=int(event.callback_query.from_user.id),
+                    photo=None
                 )
             )
 

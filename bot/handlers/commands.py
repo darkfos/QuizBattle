@@ -11,6 +11,7 @@ from bot.key.inln_kb import btn_for_profile, btn_for_game_country
 from bot.states.CreateReview import CreateReview
 from bot.states.GameState import Game
 from bot.req_api.game_api import GameAPI
+from bot.req_api.user_api import UserApi
 
 
 command_router: Router = Router()
@@ -62,8 +63,11 @@ async def my_profile_command(message: types.Message) -> None:
     Unique user profile
     """
 
-    user_photo = dict(dict(await message.from_user.get_profile_photos()).get("photos")[0][0]).get("file_id")
     msg_for_user_profile = "".join(await text_for_profile(username=message.from_user.first_name))
+    
+    #Get user photo
+    user_photo = dict(await UserApi().get_user_info()).get("photo")
+    print(user_photo)
 
     await message.answer_photo(
         photo=user_photo,
@@ -94,7 +98,6 @@ async def stats_command(message: types.Message, state: FSMContext):
     if all_stats_user:
         text_top_list: str = ""
         count_stats: int = 1
-        print(all_stats_user)
         for usr in all_stats_user[:7]:
             text_top_list += f"Место <b><i>#{count_stats}</i></b>\nПользователь: {usr.get('user_name')}\nКоличество очков: {usr.get('score')}\n\n"
             count_stats += 1

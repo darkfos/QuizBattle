@@ -75,7 +75,6 @@ async def chice_profile_btn(
                                  reply_markup=await delete_profile_btn())
     
     elif clb.data == "stats_profbtn":
-        new_update = types.Update(update_id=randrange(1, 100000000), message=clb.message)
         await clb.answer("Вы выбрали опцию мировая статистика")
         
         all_stats_user: list = await GameAPI().get_stats()
@@ -90,6 +89,10 @@ async def chice_profile_btn(
             await clb.message.answer(text="📊 Мировая статистика: \n\n"+text_top_list, parse_mode=ParseMode.HTML)
         else:
             await clb.message.answer(text="К сожалению мировая статистика пока пуста...\nНо вы можете занять свой топ!")
+    elif clb.data == "change_photo_profbtn":
+        await clb.answer("Вы выбрали опцию, обновить фото")
+        await clb.message.answer("Жду вашу новую фотографию..")
+        await state.set_state(ChangeUserPhoto.photo)
 
 
 @message_router.callback_query(IsLanguageFilter())

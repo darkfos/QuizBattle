@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, BigInteger, Date, LargeBinary
+from sqlalchemy import String, Integer, BigInteger, Date, TEXT
 from sqlalchemy.sql import func
 from api.db.decl_base import MainBase
 from datetime import datetime
@@ -15,7 +15,7 @@ class User(MainBase):
 
     telegram_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
     name_user: Mapped[str] = mapped_column(String(500))
-    photo: Mapped[bytes] = mapped_column(LargeBinary, nullable=True)
+    photo: Mapped[str] = mapped_column(TEXT, nullable=True)
     score: Mapped[int] = mapped_column(Integer)
     game_count: Mapped[int] = mapped_column(Integer, nullable=True)
     date_create: Mapped[datetime] = mapped_column(Date)

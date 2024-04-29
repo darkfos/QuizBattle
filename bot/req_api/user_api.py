@@ -1,7 +1,7 @@
 import requests
 from bot.req_api.user_set import user_auth_set
 from api.backend.schemas.UserPDSchema import (AddNewUserPDSchema,
-    UpdateUserScorePDSchema, UpdateUserGameCountPDSchema, UpdateUserInfoPDSchema)
+    UpdateUserScorePDSchema, UpdateUserGameCountPDSchema, UpdateUserInfoPDSchema, UpdateUserPhotoPDSchema)
 from api.backend.schemas.TokenPDSchema import *
 from app_settings import tg_settings
 from typing import Union
@@ -204,3 +204,20 @@ class UserApi:
             else:
                 return False
         else: return False
+
+    
+    async def update_user_photo(self, data_update: UpdateUserPhotoPDSchema) -> bool:
+
+        await self.generate_new_token()
+
+        req = self.session_req.patch(
+            url=self.url + "user/update_user_photo",
+            data=data_update.model_dump_json()
+        )
+
+        if req.status_code == 202:
+            if dict(req.json()).get("is_updated") == True:
+                return True
+            return False
+        else:
+            return False

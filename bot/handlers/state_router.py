@@ -9,7 +9,7 @@ from bot.key.reply_kb import btn_for_game
 from bot.key.inln_kb import generate_btn_for_game_translate
 from bot.req_api.game_api import GameAPI
 from bot.req_api.game_set import gss
-from bot.req_api.user_api import UserApi, UpdateUserInfoPDSchema
+from bot.req_api.user_api import UserApi, UpdateUserInfoPDSchema, UpdateUserPhotoPDSchema
 from bot.req_api.game_set import gts
 from bot.req_api.review_api import ReviewAPI, AddNewReviewPDSchema, user_auth_set
 from bot.states.UserProfileStates import ChangeUserName, ChangeUserPhoto
@@ -101,3 +101,33 @@ async def change_user_name(
     else:
         await message.answer(text="Имя должно быть текстом!")
         await state.set_state(ChangeUserName.user_name)
+    
+
+@state_router.message(ChangeUserPhoto.photo)
+async def change_user_photo(
+    message: types.Message,
+    state: FSMContext
+) -> None:
+    """
+    Update user photo
+    """
+    
+    if message.content_type == "photo":
+        print(dict(message.photo[0]).get("file_id"))
+        
+        user_data_for_update: UpdateUserPhotoPDSchema = UpdateUserPhotoPDSchema(
+            token=user_auth_set.token,
+            photo=dict(message.photo[0]).get("file_id")
+        )
+
+        req_status_code: bool = await UserApi().update_user_photo(data_update=user_data_for_update)
+        
+        if req_status_code:
+            await message.answer(text="Ваша фотография была успешно обновлена")
+        else:
+            await message.answer(text="Не удалось обновить вашу фотографию")
+
+        await state.clear()
+    else:
+        await message.answer(text="Не удалось обновить вашу фотограцию")
+        await state.set_state(ChangeUserPhoto.photo)

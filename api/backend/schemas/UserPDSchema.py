@@ -77,4 +77,4 @@ class UpdateUserGameCountPDSchema(BaseModel):
 class UpdateUserPhotoPDSchema(BaseModel):
 
     token: str
-    photo: bytes
+    photo: Union[bytes, str]
