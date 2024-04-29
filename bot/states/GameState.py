@@ -1,4 +1,5 @@
 from aiogram.fsm.state import State, StatesGroup
+from datetime import datetime
 
 
 class Game(StatesGroup):
@@ -8,7 +9,10 @@ class Game(StatesGroup):
 
 
 class GameSpeed(StatesGroup):
-    pass
+    
+    word_translate: str = State()
+    continue_or_break: bool = State()
+    time_now: datetime
 
 
 class GameTranslate(StatesGroup):

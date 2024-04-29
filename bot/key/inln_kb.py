@@ -101,6 +101,22 @@ async def generate_btn_for_game_reverse_translate() -> InlineKeyboardBuilder.as_
     return btn_game_y_n.as_markup()
 
 
+async def generate_btn_for_game_speed_translate() -> InlineKeyboardBuilder.as_markup:
+
+    btn_game_y_n: InlineKeyboardBuilder = InlineKeyboardBuilder()
+
+    btn_game_y_n.add(
+        InlineKeyboardButton(
+            text="Да", callback_data="yes_speed"
+        ),
+        InlineKeyboardButton(
+            text="Нет", callback_data="no_speed"
+        )
+    )
+
+    return btn_game_y_n.as_markup()
+
+
 async def delete_profile_btn() -> InlineKeyboardBuilder.as_markup:
 
     btn_for_delete_profile: InlineKeyboardBuilder = InlineKeyboardBuilder()

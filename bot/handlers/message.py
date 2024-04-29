@@ -16,11 +16,40 @@ from bot.req_api.history_api import HistoryApi, AddNewHistoryPDSchema
 from bot.req_api.review_api import ReviewAPI
 from bot.states.UserProfileStates import ChangeUserName, ChangeUserPhoto
 from random import randrange
+from datetime import datetime
 
 
 game = GameAPI()
 message_router: Router = Router()
-        
+
+
+@message_router.callback_query(lambda message: message.data.endswith("ed"))
+async def speed_game_continue(clb: types.CallbackQuery, state: FSMContext) -> None:
+    if "yes" in clb.data:
+        game_r = await game.get_words()
+        game_state_translate = gm_t(
+            secret_word=game_r.secret_word,
+            translate_in_russo=game_r.translate_in_russo
+        )
+
+        await clb.message.answer(f"Загаданное слово: <b>{game_state_translate.secret_word}</b>\n\nВремя на перевод: <b>5</b> секунд", parse_mode=ParseMode.HTML)
+        gss.game_time = datetime.now()
+        await state.set_state(GameSpeed.word_translate)
+    else:
+        await gss.procent_game_r()
+        await clb.message.delete()
+        await clb.message.answer(text="Игра окончена..")
+        await HistoryApi().create_history(
+            new_history=AddNewHistoryPDSchema(
+                score=gss.score,
+                right_word=gss.right_word,
+                lose_word=gss.lose_word,
+                procent_game=gss.procent_game,
+                token=user_auth_set.token
+            )
+        )
+        await state.clear() 
+
 
 @message_router.callback_query(lambda message: message.data.endswith("rt"))
 async def choice_user_continue(clb: types.CallbackQuery, state: FSMContext) -> None:
@@ -177,7 +206,16 @@ async def game_mode(message: types.Message, state: FSMContext) -> None:
         await message.answer(f"Загаданное слово: <b>{game_state_translate.secret_word}</b>", parse_mode=ParseMode.HTML)
         await state.set_state(GameTranslates.word_translate)
     elif game_mode_name == "speed_translate":
-        pass
+        game_r = await game.get_words()
+        game_state_translate = gm_t(
+            secret_word=game_r.secret_word,
+            translate_in_russo=game_r.translate_in_russo
+        )
+
+        await message.answer(f"Загаданное слово: <b>{game_state_translate.secret_word}</b>\n\nВремя на перевод: <b>5</b> секунд", parse_mode=ParseMode.HTML)
+        gss.game_time = datetime.now()
+        await state.set_state(GameSpeed.word_translate)
+
     elif game_mode_name == "reverse_translate":
         game_r = await game.get_words()
         game_state_translate = gm_t(

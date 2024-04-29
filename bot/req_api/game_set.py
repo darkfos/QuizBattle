@@ -1,3 +1,4 @@
+from datetime import datetime
 
 class GameTranslateSettings:
 
@@ -13,6 +14,7 @@ class GameStateSett:
         self.right_word: int = 0
         self.lose_word: int = 0
         self.procent_game: int = 0
+        self.game_time: datetime
 
     async def procent_game_r(self):
         try:

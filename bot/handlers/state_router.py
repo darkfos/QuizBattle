@@ -6,7 +6,7 @@ from bot.states.GameState import Game, GameTranslate as GameTranslates, GameSpee
 from api.backend.schemas.GamePDSchema import GameTranslate as gm_t
 from bot.filters.IsLanguage import IsLanguageFilter, IsGameModeFilter
 from bot.key.reply_kb import btn_for_game
-from bot.key.inln_kb import generate_btn_for_game_translate, generate_btn_for_game_reverse_translate
+from bot.key.inln_kb import generate_btn_for_game_translate, generate_btn_for_game_reverse_translate, generate_btn_for_game_speed_translate
 from bot.req_api.game_api import GameAPI
 from bot.req_api.game_set import gss
 from bot.req_api.user_api import UserApi, UpdateUserInfoPDSchema, UpdateUserPhotoPDSchema
@@ -17,6 +17,41 @@ from datetime import datetime
 
 
 state_router: Router = Router()
+
+
+@state_router.message(GameSpeed.word_translate)
+async def translate_speed_word(message: types.Message, state: FSMContext) -> None:
+    """
+    Speed translate word
+    """
+
+    await state.update_data(word_translate=message.text)
+    await UserApi().update_user_game_count(game_count=1)
+    
+
+    if message.text.lower() == gts.translate_word.lower():
+        
+        time_now = datetime.now()
+        time_quest = (gss.game_time - time_now).total_seconds()
+
+        if abs(int(time_quest)) <= 5:
+            #Update user score
+            await UserApi().update_user_score(score=5)
+            gss.right_word = gss.right_word + 1
+            gss.score = gss.score + 15
+            await message.answer(text="Отлично, ты получил 15 поинтов 🏆!")
+            await message.answer(text=f"Поздравляю {message.from_user.first_name}, ты правильно перевёл слово!\n\nЖелаешь продолжить?",
+                                reply_markup=await generate_btn_for_game_speed_translate())
+        else:
+            gss.lose_word = gss.lose_word + 1
+            await message.answer(text="К сожалению вы не успели перевести на скорость слово, желаете повторить?",
+                             reply_markup=await generate_btn_for_game_speed_translate())
+
+    else:
+        gss.lose_word = gss.lose_word + 1
+        await message.answer(text="К сожалению ваш перевод оказался неверным..\n\nЖелаете продолжить?",
+                             reply_markup=await generate_btn_for_game_speed_translate())
+        
 
 
 @state_router.message(GameTranslates.word_translate)
