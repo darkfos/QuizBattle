@@ -11,7 +11,6 @@ from datetime import datetime
 from aiogram.types import Update, Message, CallbackQuery
 from bot.middleware.AuthUser import AuthUserMiddleware
 import asyncio
-
 import logging
 
 quiz_battle_bot: Bot = Bot(tg_settings.token)
