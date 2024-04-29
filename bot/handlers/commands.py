@@ -67,8 +67,9 @@ async def my_profile_command(message: types.Message) -> None:
     
     #Get user photo
     user_photo = dict(await UserApi().get_user_info()).get("photo")
-    print(user_photo)
 
+    if user_photo is None:
+        user_photo = dict(dict(await message.from_user.get_profile_photos()).get("photos")[0][0]).get("file_id")
     await message.answer_photo(
         photo=user_photo,
         caption=msg_for_user_profile,

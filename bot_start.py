@@ -64,7 +64,7 @@ async def database_transaction_middleware(
                     date_update=datetime.now().date(),
                     telegram_id=int(event.callback_query.from_user.id),
                     photo=None
-                )
+                ),
             )
 
         if user_is_created:

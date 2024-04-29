@@ -198,7 +198,7 @@ class UserAPIService:
             all_users: List[StatsUser] = [
                 StatsUser(
                     user_name=user[0].name_user,
-                    score=user[1].score
+                    score=user[0].score
                 )
                     for user in all_users
             ]

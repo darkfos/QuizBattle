@@ -13,6 +13,7 @@ from bot.req_api.game_set import gts, gss
 from bot.req_api.user_set import user_auth_set
 from bot.req_api.user_api import UserApi
 from bot.req_api.history_api import HistoryApi, AddNewHistoryPDSchema
+from bot.req_api.review_api import ReviewAPI
 from bot.states.UserProfileStates import ChangeUserName, ChangeUserPhoto
 from random import randrange
 
@@ -20,6 +21,27 @@ from random import randrange
 game = GameAPI()
 message_router: Router = Router()
         
+
+@message_router.callback_query(lambda message: message.data.endswith("rt"))
+async def choice_user_continue(clb: types.CallbackQuery, state: FSMContext) -> None:
+    if "yes" in clb.data:
+        game_r = await game.get_words()
+        await clb.message.answer(f"Загаданное слово: <b>{gts.translate_word}</b>", parse_mode=ParseMode.HTML)
+        await state.set_state(GameReverseTranslate.word_translate)
+    else:
+        await gss.procent_game_r()
+        await clb.message.delete()
+        await clb.message.answer(text="Игра окончена..")
+        await HistoryApi().create_history(
+            new_history=AddNewHistoryPDSchema(
+                score=gss.score,
+                right_word=gss.right_word,
+                lose_word=gss.lose_word,
+                procent_game=gss.procent_game,
+                token=user_auth_set.token
+            )
+        )
+        await state.clear()    
 
 
 @message_router.callback_query(lambda message: message.data.endswith("gyp"))
@@ -41,7 +63,7 @@ async def choice_user_continue(clb: types.CallbackQuery, state: FSMContext) -> N
                 token=user_auth_set.token
             )
         )
-        await state.clear()
+        await state.clear()    
 
 
 @message_router.callback_query(lambda message: message.data.endswith("profbtn"))
@@ -55,11 +77,12 @@ async def chice_profile_btn(
         count_history = 0
         if all_my_histories:
             for history in all_my_histories:
-                await clb.message.answer(
-                    text=f"История <b>№{count_history}</b>\n\n👑 Счет: {history.get('score')}\n✅ Количество верных слов: {history.get('right_word')}\n❌ Количество неверных слов: {history.get('lose_word')}\n📝 Коэффицент правильности: {history.get('procent_game')}",
-                    parse_mode=ParseMode.HTML
-                )
+                # await clb.message.answer(
+                #     text=f"История <b>№{count_history}</b>\n\n👑 Счет: {history.get('score')}\n✅ Количество верных слов: {history.get('right_word')}\n❌ Количество неверных слов: {history.get('lose_word')}\n📝 Коэффицент правильности: {history.get('procent_game')}",
+                #     parse_mode=ParseMode.HTML
+                # )
                 count_history += 1
+            await clb.message.answer(text=f"Количество ваших историй игр: {count_history}")
         else:
             await clb.message.answer(
                 text="У вас отсутствует история, нужно это исправить!"
@@ -93,6 +116,10 @@ async def chice_profile_btn(
         await clb.answer("Вы выбрали опцию, обновить фото")
         await clb.message.answer("Жду вашу новую фотографию..")
         await state.set_state(ChangeUserPhoto.photo)
+    elif clb.data == "my_review_profbtn":
+
+        all_review: list = dict(await UserApi().get_full_user_info()).get("reviews")
+        await clb.message.answer(text=f"Количество ваших отзывов: {len(all_review)}")
 
 
 @message_router.callback_query(IsLanguageFilter())
@@ -152,7 +179,14 @@ async def game_mode(message: types.Message, state: FSMContext) -> None:
     elif game_mode_name == "speed_translate":
         pass
     elif game_mode_name == "reverse_translate":
-        pass
+        game_r = await game.get_words()
+        game_state_translate = gm_t(
+            secret_word=game_r.secret_word,
+            translate_in_russo=game_r.translate_in_russo
+        )
+
+        await message.answer(f"Слово: {game_r.translate_in_russo}, переведи его..")
+        await state.set_state(GameReverseTranslate.word_translate)
 
 
 @message_router.callback_query(DeleteProfile())

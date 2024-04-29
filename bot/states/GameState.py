@@ -16,5 +16,8 @@ class GameTranslate(StatesGroup):
     word_translate: str = State()
     continue_or_break: bool = State()
 
+
 class GameReverseTranslate(StatesGroup):
-    pass
+    
+    word_translate: str = State()
+    continue_or_break: bool = State()
