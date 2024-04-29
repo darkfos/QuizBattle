@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
@@ -59,6 +59,12 @@ async def create_new_token_with_refresh(
         token=token
     )
 
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Не удалось получить обновление токена"
+        )
+    
     response = JSONResponse(
         content=GetAccessToken(token=result.get("token")).model_dump()
     )

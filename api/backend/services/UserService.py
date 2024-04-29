@@ -5,6 +5,8 @@ from api.backend.schemas.UserPDSchema import *
 from api.backend.schemas.TokenPDSchema import GetAccessToken
 from sqlalchemy.ext.asyncio import AsyncSession
 from api.backend.auth.security import SecurityAPI
+from api.db.models.UserTable import User
+from sqlalchemy import select
 from typing import List, Union
 
 
@@ -121,16 +123,25 @@ class UserAPIService:
 
         await security_app.user_is_created(
             session=session,
-            telegram_id= data_from_token.get("tg_id")
+            telegram_id=data_from_token.get("tg_id")
             )
         
-        if flag:
+        sel = select(User).where(User.id == data_from_token.get("user_id"))
+        res: User = (( await session.execute(sel) ).one_or_none())[0]
+
+        if flag == "count":
             is_updated: bool = await UserDatabaseService.update_record(
                 session=session,
                 user_id=data_from_token.get("user_id"),
-                new_data={"score": user_data.score}
+                new_data={"game_count": user_data.game_count + (res.game_count if res.game_count else 0)}
             )
 
+        elif flag == True:
+            is_updated: bool = await UserDatabaseService.update_record(
+                session=session,
+                user_id=data_from_token.get("user_id"),
+                new_data={"score": user_data.score + res.score}
+            )
         else:
             is_updated: bool = await UserDatabaseService.update_record(
                 session=session,

@@ -1,6 +1,6 @@
 import requests
 from bot.req_api.user_set import user_auth_set
-from api.backend.schemas.UserPDSchema import AddNewUserPDSchema
+from api.backend.schemas.UserPDSchema import AddNewUserPDSchema, UpdateUserScorePDSchema
 from app_settings import tg_settings
 from typing import Union
 
@@ -35,16 +35,16 @@ class UserApi:
             url=self.url+f"auth/create_token/{telegram_id}"
         )
         #cookie
-        cookie_result = result.cookies
-
-        if result.status_code == 201:
+        cookie_result = dict(result.cookies)
+        if result.status_code == 200:
             res = dict(result.json())
+            print(res)
             user_auth_set.token = res.get("token")
             user_auth_set.refresh_token = cookie_result.get("refresh_token")
         else:
             return False
         
-    async def generate_new_token(self, token: str) -> None:
+    async def generate_new_token(self) -> None:
         """
         Generate new token with help refresh_token
         """
@@ -52,14 +52,15 @@ class UserApi:
         result = self.session_req.post(
             url=self.url+"auth/refresh_token",
             params={
-                "token": token
+                "token": user_auth_set.refresh_token
             }
         )
+
 
         if result.status_code == 200:
             user_auth_set.token = dict(result.json()).get("token")
         else:
-            return "Не удалось получить новый token"
+            return False
     
     async def get_user_info(self) -> None:
         """
@@ -89,20 +90,24 @@ class UserApi:
         try:
             result = self.session_req.patch(
                 url=self.url+"user/update_user_score",
-                data={
-                    "token": user_auth_set.token,
-                    "score": score
-                }
+                data=UpdateUserScorePDSchema(
+                    token=user_auth_set.token,
+                    score=score
+                ).model_dump_json()
             )
+
 
             if result.status_code == 202:
                 res = dict(result.json())
 
                 if res.get("is_updated") == True:
                     pass
-                else:
-                    raise ex
+            else:
+                raise ex
                 
         except Exception as ex:
-            await self.generate_new_token(token=user_auth_set.refresh_token)
-            await self.get_user_info()
+            res_generate = await self.generate_new_token()
+            if res_generate is False:
+                pass
+            else:
+                await self.update_user_score(score=score)

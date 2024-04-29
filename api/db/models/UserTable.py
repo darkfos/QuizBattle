@@ -16,6 +16,7 @@ class User(MainBase):
     telegram_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
     name_user: Mapped[str] = mapped_column(String(500))
     score: Mapped[int] = mapped_column(Integer)
+    game_count: Mapped[int] = mapped_column(Integer, nullable=True)
     date_create: Mapped[datetime] = mapped_column(Date)
     date_update: Mapped[datetime] = mapped_column(Date)
 

@@ -63,3 +63,9 @@ class UserIsUpdated(BaseModel):
 class UserIsDeletedPDSchema(BaseModel):
 
     is_deleted: bool
+
+
+class UpdateUserGameCountPDSchema(BaseModel):
+
+    token: str
+    game_count: int
