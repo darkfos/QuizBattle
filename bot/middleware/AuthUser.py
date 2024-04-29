@@ -22,6 +22,7 @@ class AuthUserMiddleware(BaseMiddleware):
             user_data=AddNewUserPDSchema(
                 name_user=event.from_user.first_name,
                 score=0,
+                game_count=0,
                 date_create=datetime.now().date(),
                 date_update=datetime.now().date(),
                 telegram_id=int(event.from_user.id)

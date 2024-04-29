@@ -61,7 +61,7 @@ class UserAPIService:
             return UserBasePDSchema(
                 name_user=user_information.name_user,
                 score=user_information.score,
-                game_count=user_information.game_count,
+                game_count=(0 if user_full_information.game_count is None else user_full_information.game_count),
                 date_create=user_information.date_create,
                 date_update=user_information.date_update
             )
@@ -88,7 +88,7 @@ class UserAPIService:
         response: UserFullInformationPDSchema = UserFullInformationPDSchema(
             name_user=user_full_information.name_user,
             score=user_full_information.score,
-            game_count=user_full_information.game_count,
+            game_count=(0 if user_full_information.game_count is None else user_full_information.game_count),
             date_create=user_full_information.date_create,
             date_update=user_full_information.date_update,
             histories=[

@@ -38,7 +38,6 @@ class UserApi:
         cookie_result = dict(result.cookies)
         if result.status_code == 200:
             res = dict(result.json())
-            print(res)
             user_auth_set.token = res.get("token")
             user_auth_set.refresh_token = cookie_result.get("refresh_token")
         else:
@@ -79,8 +78,29 @@ class UserApi:
                 raise ex
             
         except Exception as ex:
-            await self.generate_new_token(token=user_auth_set.refresh_token)
+            await self.generate_new_token()
             await self.get_user_info()
+    
+
+    async def get_full_user_info(self) -> None:
+        """
+        Get full user info
+        """
+
+        try:
+            result = self.session_req.get(
+                url=self.url+"user/about_me/full-information",
+                params={"token": user_auth_set.token}
+            )
+            
+            if result.status_code == 200:
+                return dict(result.json())
+            else:
+                raise ex
+            
+        except Exception as ex:
+            await self.generate_new_token()
+            await self.get_full_user_info()
 
     async def update_user_score(self, score: int) -> None:
         """
