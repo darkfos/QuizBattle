@@ -1,6 +1,7 @@
 import requests
 from bot.req_api.user_set import user_auth_set
-from api.backend.schemas.UserPDSchema import AddNewUserPDSchema, UpdateUserScorePDSchema, UpdateUserGameCountPDSchema
+from api.backend.schemas.UserPDSchema import (AddNewUserPDSchema,
+    UpdateUserScorePDSchema, UpdateUserGameCountPDSchema, UpdateUserInfoPDSchema)
 from app_settings import tg_settings
 from typing import Union
 
@@ -34,6 +35,7 @@ class UserApi:
         result = self.session_req.post(
             url=self.url+f"auth/create_token/{telegram_id}"
         )
+
         #cookie
         cookie_result = dict(result.cookies)
         if result.status_code == 200:
@@ -47,7 +49,7 @@ class UserApi:
         """
         Generate new token with help refresh_token
         """
-
+        
         result = self.session_req.post(
             url=self.url+"auth/refresh_token",
             params={
@@ -157,3 +159,30 @@ class UserApi:
                 pass
             else:
                 await self.update_user_score(game_count=game_count)
+
+    async def update_user_name(self, data_update: UpdateUserInfoPDSchema) -> bool:
+        try:
+            result = self.session_req.put(
+                url=self.url+"user/update_user_info",
+                json={
+                    "token": data_update.token,
+                    "name_user": data_update.name_user,
+                    "date_update": str(data_update.date_update)
+                }
+            )
+
+            print(result.status_code, result.content)
+            if result.status_code in (202, 200):
+                res = dict(result.json())
+
+                if res.get("is_updated") == True:
+                    return True
+            else:
+                raise ex
+                
+        except Exception as ex:
+            res_generate = await self.generate_new_token()
+            if res_generate is False:
+                pass
+            else:
+                await self.update_user_name(data_update=data_update)

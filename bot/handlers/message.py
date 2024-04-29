@@ -11,6 +11,7 @@ from bot.req_api.game_api import GameAPI
 from bot.req_api.game_set import gts, gss
 from bot.req_api.user_set import user_auth_set
 from bot.req_api.history_api import HistoryApi, AddNewHistoryPDSchema
+from bot.states.UserProfileStates import ChangeUserName, ChangeUserPhoto
 
 
 game = GameAPI()
@@ -60,6 +61,11 @@ async def chice_profile_btn(
             await clb.message.answer(
                 text="У вас отсутствует история, нужно это исправить!"
             )
+    elif clb.data == "change_username_profbtn":
+        await clb.answer("Вы выбрали опцию изменить имя")
+        await clb.message.answer("Введите ваше новое имя: ")
+        await state.set_state(ChangeUserName.user_name)        
+
 
 @message_router.callback_query(IsLanguageFilter())
 async def language_sel(message: types.CallbackQuery, state: FSMContext) -> None:

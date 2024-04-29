@@ -73,6 +73,7 @@ class UserDatabaseService(CRUDRepository):
             return True
 
         except Exception as ex:
+            print(ex)
             return False
         finally:
             await session.close()

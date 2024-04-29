@@ -49,6 +49,7 @@ class SecurityAPI:
                 return data_user
             return jwt_error
         except JWTError as jwt_error:
+            print(jwt_error)
             await http_400_token_not_found()
         
     async def create_new_token_with_refresh(self, token: str) -> dict:

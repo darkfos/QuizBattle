@@ -42,7 +42,7 @@ class UpdateUserInfoPDSchema(BaseModel):
 
     token: Annotated[str, Field]
     name_user: Annotated[str, Field(max_length=500)]
-    date_update: datetime
+    date_update: datetime = Field(default=datetime.now().date())
 
 
 class UpdateUserScorePDSchema(BaseModel):

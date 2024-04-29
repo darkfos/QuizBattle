@@ -9,8 +9,11 @@ from bot.key.reply_kb import btn_for_game
 from bot.key.inln_kb import generate_btn_for_game_translate
 from bot.req_api.game_api import GameAPI
 from bot.req_api.game_set import gss
-from bot.req_api.user_api import UserApi
+from bot.req_api.user_api import UserApi, UpdateUserInfoPDSchema
 from bot.req_api.game_set import gts
+from bot.req_api.review_api import ReviewAPI, AddNewReviewPDSchema, user_auth_set
+from bot.states.UserProfileStates import ChangeUserName, ChangeUserPhoto
+from datetime import datetime
 
 
 state_router: Router = Router()
@@ -53,9 +56,48 @@ async def get_message_review_from_user(
     """
 
     if message.content_type == "text":
-        await state.update_data(message=message.text)
-        await message.answer(text="Отлично, ваш отзыв был сохранён!")
-        await state.clear()
+        #Save review
+        save_req = await ReviewAPI().create_review(
+            new_review=AddNewReviewPDSchema(
+                message=message.text,
+                token=user_auth_set.token
+            )
+        )
+
+        if save_req:
+            await state.update_data(message=message.text)
+            await message.answer(text="Отлично, ваш отзыв был сохранён!")
+            await state.clear()
+        else:
+            await message.answer(text="Не удалось сохранить ваш отзыв")
+            await state.clear()
     else:
         await message.answer(text="Ожидается текст!")
         await state.set_state(CreateReview.message)
+
+
+@state_router.message(ChangeUserName.user_name)
+async def change_user_name(
+    message: types.Message,
+    state: FSMContext
+) -> None:
+    """
+    Change user name
+    """
+
+    if message.content_type == "text":
+        req = await UserApi().update_user_name(
+            data_update=UpdateUserInfoPDSchema(
+                token=user_auth_set.token,
+                name_user=str(message.text),
+                date_update=datetime.now().date()
+            )
+        )
+
+        if req:
+            await message.answer(text="Ваше имя было успешно изменено")
+        else:
+            await message.answer(text="Не удалось обновить ваше имя")
+    else:
+        await message.answer(text="Имя должно быть текстом!")
+        await state.set_state(ChangeUserName.user_name)
