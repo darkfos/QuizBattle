@@ -30,7 +30,8 @@ class UserAPIService:
             name_user=user_data.name_user,
             score=user_data.score,
             date_create=user_data.date_create,
-            date_update=user_data.date_update
+            date_update=user_data.date_update,
+            photo=user_data.photo
         )
         
         result = await UserDatabaseService.add_record(session=session, new_user=new_user)
@@ -62,9 +63,10 @@ class UserAPIService:
             return UserBasePDSchema(
                 name_user=user_information.name_user,
                 score=user_information.score,
-                game_count=(0 if user_full_information.game_count is None else user_full_information.game_count),
+                game_count=(0 if user_information.game_count is None else user_information.game_count),
                 date_create=user_information.date_create,
-                date_update=user_information.date_update
+                date_update=user_information.date_update,
+                photo=user_information.photo
             )
         
         await http_400_user_not_found()
@@ -92,6 +94,7 @@ class UserAPIService:
             game_count=(0 if user_full_information.game_count is None else user_full_information.game_count),
             date_create=user_full_information.date_create,
             date_update=user_full_information.date_update,
+            photo=user_full_information.photo,
             histories=[
                 GetHistoryPDSchema(
                     score=history.score,
@@ -115,7 +118,7 @@ class UserAPIService:
     async def update_user(
         session: AsyncSession,
         user_data: UpdateUserInfoPDSchema,
-        flag: bool = False
+        flag: Union[bool, str] = False
     ) -> UserIsUpdated:
         """
         Update information about user
@@ -137,6 +140,13 @@ class UserAPIService:
                 session=session,
                 user_id=data_from_token.get("user_id"),
                 new_data={"game_count": user_data.game_count + (res.game_count if res.game_count else 0)}
+            )
+        
+        elif flag == "photo":
+            is_updated: bool = await UserDatabaseService.update_record(
+                session=session,
+                user_id=data_from_token.get("user_id"),
+                new_data={"photo": user_data.photo}
             )
 
         elif flag == True:
@@ -176,7 +186,7 @@ class UserAPIService:
     async def get_all_users_order_by_score(
         session: AsyncSession,
         token: GetAccessToken
-    ) -> Union[List. List[StatsUser]]:
+    ) -> Union[List, List[StatsUser]]:
         
         #Get user id
         data_from_token: dict = await security_app.decode_jwt(token=token)
@@ -184,7 +194,6 @@ class UserAPIService:
         await security_app.user_is_created(telegram_id=data_from_token.get("tg_id"), session=session)
 
         all_users: tuple = await UserDatabaseService.get_all_records_order_score(session=session)
-        print(all_users)
         if len(all_users) > 0:
             all_users: List[StatsUser] = [
                 StatsUser(

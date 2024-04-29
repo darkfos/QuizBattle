@@ -119,3 +119,21 @@ async def update_user_game_count(
         user_data=user_data,
         flag="count"
     )
+
+
+@user_router.patch("/update_user_photo",
+                status_code=status.HTTP_202_ACCEPTED,
+                response_model=UserIsUpdated)
+async def update_user_photo(
+    session: Annotated[AsyncSession, Depends(db_worker.get_session)],
+    user_data: UpdateUserPhotoPDSchema
+) -> UserIsUpdated:
+    """
+    Update user photo
+    """
+
+    return await UserAPIService.update_user(
+        session=session,
+        user_data=user_data,
+        flag="photo"
+    )

@@ -12,6 +12,8 @@ class UserBasePDSchema(BaseModel):
     game_count: Annotated[int, Field()]
     date_create: datetime = Field(default=datetime.now().date())
     date_update: datetime = Field(default=datetime.now().date())
+    photo: Annotated[Union[bytes, None], Field()]
+
 
 
 class UserFullInformationPDSchema(UserBasePDSchema):
@@ -70,3 +72,9 @@ class UpdateUserGameCountPDSchema(BaseModel):
 
     token: str
     game_count: int
+
+
+class UpdateUserPhotoPDSchema(BaseModel):
+
+    token: str
+    photo: bytes
