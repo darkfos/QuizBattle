@@ -8,7 +8,9 @@ from bot.filters.IsLanguage import IsLanguageFilter, IsGameModeFilter
 from bot.key.reply_kb import btn_for_game
 from bot.key.inln_kb import generate_btn_for_game_translate
 from bot.req_api.game_api import GameAPI
-from bot.req_api.game_set import gts
+from bot.req_api.game_set import gts, gss
+from bot.req_api.user_set import user_auth_set
+from bot.req_api.history_api import HistoryApi, AddNewHistoryPDSchema
 
 
 game = GameAPI()
@@ -23,8 +25,18 @@ async def choice_user_continue(clb: types.CallbackQuery, state: FSMContext) -> N
         await clb.message.answer(f"Загаданное слово: <b>{gts.word}</b>", parse_mode=ParseMode.HTML)
         await state.set_state(GameTranslates.word_translate)
     else:
+        await gss.procent_game_r()
         await clb.message.delete()
         await clb.message.answer(text="Игра окончена..")
+        await HistoryApi().create_history(
+            new_history=AddNewHistoryPDSchema(
+                score=gss.score,
+                right_word=gss.right_word,
+                lose_word=gss.lose_word,
+                procent_game=gss.procent_game,
+                token=user_auth_set.token
+            )
+        )
         await state.clear()
 
 

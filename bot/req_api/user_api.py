@@ -1,6 +1,6 @@
 import requests
 from bot.req_api.user_set import user_auth_set
-from api.backend.schemas.UserPDSchema import AddNewUserPDSchema, UpdateUserScorePDSchema
+from api.backend.schemas.UserPDSchema import AddNewUserPDSchema, UpdateUserScorePDSchema, UpdateUserGameCountPDSchema
 from app_settings import tg_settings
 from typing import Union
 
@@ -131,3 +131,29 @@ class UserApi:
                 pass
             else:
                 await self.update_user_score(score=score)
+
+    async def update_user_game_count(self, game_count: int) -> None:
+        try:
+            result = self.session_req.patch(
+                url=self.url+"user/update_user_game_count",
+                data=UpdateUserGameCountPDSchema(
+                    token=user_auth_set.token,
+                    game_count=game_count
+                ).model_dump_json()
+            )
+
+
+            if result.status_code == 202:
+                res = dict(result.json())
+
+                if res.get("is_updated") == True:
+                    pass
+            else:
+                raise ex
+                
+        except Exception as ex:
+            res_generate = await self.generate_new_token()
+            if res_generate is False:
+                pass
+            else:
+                await self.update_user_score(game_count=game_count)
