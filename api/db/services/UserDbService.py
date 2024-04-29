@@ -185,7 +185,7 @@ class UserDatabaseService(CRUDRepository):
             res: Result = await session.execute(stmt)
 
             if res:
-                return res.all()[0]
+                return res.all()
             raise ex
         
         except Exception as ex:

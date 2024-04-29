@@ -10,6 +10,7 @@ from bot.utils.text.command_text import (text_for_start_command,
 from bot.key.inln_kb import btn_for_profile, btn_for_game_country
 from bot.states.CreateReview import CreateReview
 from bot.states.GameState import Game
+from bot.req_api.game_api import GameAPI
 
 
 command_router: Router = Router()
@@ -88,7 +89,19 @@ async def stats_command(message: types.Message, state: FSMContext):
     Get stats
     """
 
-    await message.answer(text="🌍 Мировая <b>статистика</b>: ", parse_mode=ParseMode.HTML)
+    all_stats_user: list = await GameAPI().get_stats()
+
+    if all_stats_user:
+        text_top_list: str = ""
+        count_stats: int = 1
+        print(all_stats_user)
+        for usr in all_stats_user[:7]:
+            text_top_list += f"Место <b><i>#{count_stats}</i></b>\nПользователь: {usr.get('user_name')}\nКоличество очков: {usr.get('score')}\n\n"
+            count_stats += 1
+
+        await message.answer(text="🌍 Мировая статистика: \n\n"+text_top_list, parse_mode=ParseMode.HTML)
+    else:
+        await message.answer(text="К сожалению мировая статистика пока пуста...\nНо вы можете занять свой топ!")
 
 
 @command_router.message(Command("game"))

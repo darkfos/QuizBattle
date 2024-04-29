@@ -184,12 +184,11 @@ class UserAPIService:
         await security_app.user_is_created(telegram_id=data_from_token.get("tg_id"), session=session)
 
         all_users: tuple = await UserDatabaseService.get_all_records_order_score(session=session)
-        
         if len(all_users) > 0:
             all_users: List[StatsUser] = [
                 StatsUser(
-                    user_name=user.name_user,
-                    score=user.score
+                    user_name=user[0].name_user,
+                    score=user[0].score
                 )
                     for user in all_users
             ]
