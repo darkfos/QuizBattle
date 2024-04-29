@@ -9,6 +9,7 @@ class UserBasePDSchema(BaseModel):
     
     name_user: Annotated[str, Field(max_length=500)]
     score: Annotated[int, Field()]
+    game_count: Annotated[int, Field()]
     date_create: datetime = Field(default=datetime.now().date())
     date_update: datetime = Field(default=datetime.now().date())
 
