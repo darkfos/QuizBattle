@@ -40,5 +40,4 @@ async def get_stats_about_all_users(
 ) -> Union[List, List[StatsUser]]:
     
     res = await UserAPIService().get_all_users_order_by_score(session=session, token=token)
-    print(res)
     return res

@@ -14,6 +14,7 @@ from bot.req_api.user_set import user_auth_set
 from bot.req_api.user_api import UserApi
 from bot.req_api.history_api import HistoryApi, AddNewHistoryPDSchema
 from bot.states.UserProfileStates import ChangeUserName, ChangeUserPhoto
+from random import randrange
 
 
 game = GameAPI()
@@ -72,6 +73,23 @@ async def chice_profile_btn(
         await clb.message.answer("Вы выбрали опцию <b>Удалить профиль</b>, вы уверены?",
                                  parse_mode=ParseMode.HTML,
                                  reply_markup=await delete_profile_btn())
+    
+    elif clb.data == "stats_profbtn":
+        new_update = types.Update(update_id=randrange(1, 100000000), message=clb.message)
+        await clb.answer("Вы выбрали опцию мировая статистика")
+        
+        all_stats_user: list = await GameAPI().get_stats()
+
+        if all_stats_user:
+            text_top_list: str = ""
+            count_stats: int = 1
+            for usr in all_stats_user[:7]:
+                text_top_list += f"Место <b><i>#{count_stats}</i></b>\nПользователь: {usr.get('user_name')}\nКоличество очков: {usr.get('score')}\n\n"
+                count_stats += 1
+
+            await clb.message.answer(text="📊 Мировая статистика: \n\n"+text_top_list, parse_mode=ParseMode.HTML)
+        else:
+            await clb.message.answer(text="К сожалению мировая статистика пока пуста...\nНо вы можете занять свой топ!")
 
 
 @message_router.callback_query(IsLanguageFilter())
