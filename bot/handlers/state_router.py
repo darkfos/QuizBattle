@@ -5,7 +5,6 @@ from aiogram.fsm.context import FSMContext
 from bot.states.GameState import Game, GameTranslate as GameTranslates, GameSpeed, GameReverseTranslate
 from api.backend.schemas.GamePDSchema import GameTranslate as gm_t
 from bot.filters.IsLanguage import IsLanguageFilter, IsGameModeFilter
-from bot.key.reply_kb import btn_for_game
 from bot.key.inln_kb import generate_btn_for_game_translate
 from bot.req_api.game_api import GameAPI
 from bot.req_api.game_set import gss
