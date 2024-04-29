@@ -16,7 +16,7 @@ class History(MainBase):
     procent_game: Mapped[float] = mapped_column(Double)
 
     #Foreign key
-    user_id: Mapped[int] = mapped_column(ForeignKey("user_table.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_table.id", ondelete="CASCADE"))
     user: Mapped["User"] = relationship(back_populates="history")
 
     def __str__(self) -> str:

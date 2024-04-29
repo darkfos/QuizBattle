@@ -6,10 +6,12 @@ from bot.states.GameState import Game, GameTranslate as GameTranslates, GameSpee
 from api.backend.schemas.GamePDSchema import GameTranslate as gm_t
 from bot.filters.IsLanguage import IsLanguageFilter, IsGameModeFilter
 from bot.key.reply_kb import btn_for_game
-from bot.key.inln_kb import generate_btn_for_game_translate
+from bot.key.inln_kb import generate_btn_for_game_translate, delete_profile_btn
+from bot.filters.DeletePrifle import DeleteProfile
 from bot.req_api.game_api import GameAPI
 from bot.req_api.game_set import gts, gss
 from bot.req_api.user_set import user_auth_set
+from bot.req_api.user_api import UserApi
 from bot.req_api.history_api import HistoryApi, AddNewHistoryPDSchema
 from bot.states.UserProfileStates import ChangeUserName, ChangeUserPhoto
 
@@ -64,7 +66,12 @@ async def chice_profile_btn(
     elif clb.data == "change_username_profbtn":
         await clb.answer("Вы выбрали опцию изменить имя")
         await clb.message.answer("Введите ваше новое имя: ")
-        await state.set_state(ChangeUserName.user_name)        
+        await state.set_state(ChangeUserName.user_name)   
+
+    elif clb.data == "delete_me_profbtn":
+        await clb.message.answer("Вы выбрали опцию <b>Удалить профиль</b>, вы уверены?",
+                                 parse_mode=ParseMode.HTML,
+                                 reply_markup=await delete_profile_btn())
 
 
 @message_router.callback_query(IsLanguageFilter())
@@ -125,6 +132,26 @@ async def game_mode(message: types.Message, state: FSMContext) -> None:
         pass
     elif game_mode_name == "reverse_translate":
         pass
+
+
+@message_router.callback_query(DeleteProfile())
+async def delete_profile_user(clb: types.CallbackQuery):
+    """
+        Delete profile
+    """
+
+    if clb.data == "yes_del":
+        await clb.message.delete()
+        req_del: bool = await UserApi().delete_profile()
+
+        if req_del:
+            await clb.answer(text="Ваш профиль был удалён")
+        else:
+            await clb.answer(text="Не удалось удалить профиль")
+    else:
+        await clb.message.delete()
+        await clb.answer(text="Отмена операции удаления профиля")
+
 
 @message_router.message()
 async def all_other_message(message: types.Message) -> None:

@@ -21,10 +21,12 @@ class User(MainBase):
     date_update: Mapped[datetime] = mapped_column(Date)
 
     #Link with History
-    history: Mapped[List["History"]] = relationship(back_populates="user")
+    history: Mapped[List["History"]] = relationship(back_populates="user", cascade='save-update, merge, delete',
+        passive_deletes=True)
 
     #Link with all reviews
-    reviews: Mapped[List["Review"]] = relationship(back_populates="user")
+    reviews: Mapped[List["Review"]] = relationship(back_populates="user", cascade='save-update, merge, delete',
+        passive_deletes=True)
 
     def __str__(self) -> str:
         return str(

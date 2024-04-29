@@ -2,6 +2,7 @@ import requests
 from bot.req_api.user_set import user_auth_set
 from api.backend.schemas.UserPDSchema import (AddNewUserPDSchema,
     UpdateUserScorePDSchema, UpdateUserGameCountPDSchema, UpdateUserInfoPDSchema)
+from api.backend.schemas.TokenPDSchema import *
 from app_settings import tg_settings
 from typing import Union
 
@@ -171,7 +172,6 @@ class UserApi:
                 }
             )
 
-            print(result.status_code, result.content)
             if result.status_code in (202, 200):
                 res = dict(result.json())
 
@@ -186,3 +186,21 @@ class UserApi:
                 pass
             else:
                 await self.update_user_name(data_update=data_update)
+    
+    async def delete_profile(self) -> bool:
+        
+        await self.generate_new_token()
+
+        req = self.session_req.delete(
+            url=self.url + "user/delete_user",
+            json=GetAccessToken(
+                token=user_auth_set.token
+            ).model_dump()
+        )
+
+        if req.status_code == 202:
+            if dict(req.json()).get("is_deleted") == True:
+                return True
+            else:
+                return False
+        else: return False

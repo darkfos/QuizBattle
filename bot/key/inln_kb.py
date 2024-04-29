@@ -83,3 +83,20 @@ async def generate_btn_for_game_translate() -> InlineKeyboardBuilder.as_markup:
     )
 
     return btn_game_y_n.as_markup()
+
+
+async def delete_profile_btn() -> InlineKeyboardBuilder.as_markup:
+
+    btn_for_delete_profile: InlineKeyboardBuilder = InlineKeyboardBuilder()
+
+
+    btn_for_delete_profile.add(
+        InlineKeyboardButton(
+            text="Да", callback_data="yes_del"
+        ),
+        InlineKeyboardButton(
+            text="Нет", callback_data="no_del"
+        )
+    )
+
+    return btn_for_delete_profile.as_markup()

@@ -13,7 +13,7 @@ class Review(MainBase):
     message: Mapped[str] = mapped_column(Text)
     
     #Foreign key
-    user_id: Mapped[int] = mapped_column(ForeignKey("user_table.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_table.id", ondelete="CASCADE"))
     user: Mapped["User"] = relationship(back_populates="reviews")
 
     def __str__(self) -> str:
