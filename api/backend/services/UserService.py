@@ -6,6 +6,7 @@ from api.backend.schemas.TokenPDSchema import GetAccessToken
 from sqlalchemy.ext.asyncio import AsyncSession
 from api.backend.auth.security import SecurityAPI
 from api.db.models.UserTable import User
+from api.backend.schemas.GamePDSchema import StatsUser
 from sqlalchemy import select
 from typing import List, Union
 
@@ -170,3 +171,29 @@ class UserAPIService:
         is_deleted: bool = await UserDatabaseService.del_record(session=session, user_id=data_from_token.get("user_id"))
 
         return UserIsDeletedPDSchema(is_deleted=is_deleted)
+    
+    @staticmethod
+    async def get_all_users_order_by_score(
+        session: AsyncSession,
+        token: GetAccessToken
+    ) -> Union[List, List[StatsUser]]:
+        
+        #Get user id
+        data_from_token: dict = await security_app.decode_jwt(token=token)
+        
+        await security_app.user_is_created(telegram_id=data_from_token.get("tg_id"), session=session)
+
+        all_users: tuple = await UserDatabaseService.get_all_records_order_score(session=session)
+        
+        if len(all_users) > 0:
+            all_users: List[StatsUser] = [
+                StatsUser(
+                    user_name=user.name_user,
+                    score=user.score
+                )
+                    for user in all_users
+            ]
+
+            return all_users
+        else:
+            return []

@@ -1,6 +1,6 @@
 from abs_fabric import CRUDRepository
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import Result, select, delete, update
+from sqlalchemy import Result, select, delete, update, desc
 from sqlalchemy.orm import joinedload
 from api.db.models.UserTable import User
 from typing import Union, List
@@ -173,7 +173,22 @@ class UserDatabaseService(CRUDRepository):
             raise ex
         
         except Exception as ex:
-            print(ex)
+            return False
+        finally:
+            await session.close()
+    
+    @staticmethod
+    async def get_all_records_order_score(session: AsyncSession):
+        try:
+            stmt = select(User).order_by(desc(User.score))
+
+            res: Result = await session.execute(stmt)
+
+            if res:
+                return res.all()[0]
+            raise ex
+        
+        except Exception as ex:
             return False
         finally:
             await session.close()
