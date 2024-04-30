@@ -27,6 +27,22 @@ class GenerateLanguage:
                     german_word: str = self.translator_engine.translate(random_word, src=self.__language, dest=attr_lng).text
                     return {"word": german_word, 
                         "translate": self.translator_engine.translate(german_word, src='de', dest='ru').text}
+                elif attr_lng == "fr":
+                    france_word: str = self.translator_engine.translate(random_word, src=self.__language, dest=attr_lng).text
+                    return {"word": france_word, 
+                        "translate": self.translator_engine.translate(france_word, src='fr', dest='ru').text}
+                elif attr_lng == "ja":
+                    japan_word: str = self.translator_engine.translate(random_word, src=self.__language, dest=attr_lng).text
+                    return {"word": japan_word, 
+                        "translate": self.translator_engine.translate(japan_word, src='ja', dest='ru').text}
+                elif attr_lng == "fi":
+                    fin_word: str = self.translator_engine.translate(random_word, src=self.__language, dest=attr_lng).text
+                    return {"word": fin_word, 
+                        "translate": self.translator_engine.translate(fin_word, src='fi', dest='ru').text}
+                elif attr_lng == "no":
+                    norwat_word: str = self.translator_engine.translate(random_word, src=self.__language, dest=attr_lng).text
+                    return {"word": norwat_word, 
+                        "translate": self.translator_engine.translate(norwat_word, src='no', dest='ru').text}
                 else:
                     break
             except TypeError as te:

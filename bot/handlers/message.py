@@ -60,7 +60,7 @@ async def choice_user_continue(clb: types.CallbackQuery, state: FSMContext) -> N
     else:
         await gss.procent_game_r()
         await clb.message.delete()
-        await clb.message.answer(text="Игра окончена..")
+        await clb.message.answer(text="🛑 Игра окончена..")
         await HistoryApi().create_history(
             new_history=AddNewHistoryPDSchema(
                 score=gss.score,
@@ -82,7 +82,7 @@ async def choice_user_continue(clb: types.CallbackQuery, state: FSMContext) -> N
     else:
         await gss.procent_game_r()
         await clb.message.delete()
-        await clb.message.answer(text="Игра окончена..")
+        await clb.message.answer(text="🛑 Игра окончена..")
         await HistoryApi().create_history(
             new_history=AddNewHistoryPDSchema(
                 score=gss.score,
@@ -111,23 +111,23 @@ async def chice_profile_btn(
                 #     parse_mode=ParseMode.HTML
                 # )
                 count_history += 1
-            await clb.message.answer(text=f"Количество ваших историй игр: {count_history}")
+            await clb.message.answer(text=f"📚 Количество ваших историй игр: {count_history}")
         else:
             await clb.message.answer(
-                text="У вас отсутствует история, нужно это исправить!"
+                text="У вас отсутствует история 📌, нужно это исправить!"
             )
     elif clb.data == "change_username_profbtn":
-        await clb.answer("Вы выбрали опцию изменить имя")
-        await clb.message.answer("Введите ваше новое имя: ")
+        await clb.answer("💡 Вы выбрали опцию изменить имя")
+        await clb.message.answer("✏ Введите ваше <b>новое имя:</b> ", parse_mode=ParseMode.HTML)
         await state.set_state(ChangeUserName.user_name)   
 
     elif clb.data == "delete_me_profbtn":
-        await clb.message.answer("Вы выбрали опцию <b>Удалить профиль</b>, вы уверены?",
+        await clb.message.answer("Вы выбрали опцию <b>Удалить профиль</b> 🗑, вы уверены?",
                                  parse_mode=ParseMode.HTML,
                                  reply_markup=await delete_profile_btn())
     
     elif clb.data == "stats_profbtn":
-        await clb.answer("Вы выбрали опцию мировая статистика")
+        await clb.answer("💡 Вы выбрали опцию мировая статистика")
         
         all_stats_user: list = await GameAPI().get_stats()
 
@@ -142,13 +142,13 @@ async def chice_profile_btn(
         else:
             await clb.message.answer(text="К сожалению мировая статистика пока пуста...\nНо вы можете занять свой топ!")
     elif clb.data == "change_photo_profbtn":
-        await clb.answer("Вы выбрали опцию, обновить фото")
-        await clb.message.answer("Жду вашу новую фотографию..")
+        await clb.answer("💡 Вы выбрали опцию, обновить фото")
+        await clb.message.answer("📷 Жду вашу новую фотографию..")
         await state.set_state(ChangeUserPhoto.photo)
     elif clb.data == "my_review_profbtn":
 
         all_review: list = dict(await UserApi().get_full_user_info()).get("reviews")
-        await clb.message.answer(text=f"Количество ваших отзывов: {len(all_review)}")
+        await clb.message.answer(text=f"📚 Количество ваших отзывов: {len(all_review)}")
 
 
 @message_router.callback_query(IsLanguageFilter())
@@ -165,13 +165,21 @@ async def language_sel(message: types.CallbackQuery, state: FSMContext) -> None:
             country_name = "en"
         case "game_germany_gmt":
             country_name = "de"
+        case "game_franch_gmt":
+            country_name = "fr"
+        case "game_japanese_gmt":
+            country_name = "ja"
+        case "game_finnish_gmt":
+            country_name = "fi"
+        case "game_norway_gmt":
+            country_name = "no"
 
     #Set country name
     game.code = country_name
     await state.update_data(language=country_name)
     await state.set_state(Game.game_mode)
     await message.message.answer(
-        text=f"Отлично был выбран <b>{country_name}</b> язык, пожалуйста выберите режим игры...",
+        text=f"Отлично был выбран <b>{country_name}</b> язык 🏳, пожалуйста выберите режим игры...",
         parse_mode=ParseMode.HTML,
         reply_markup=(await btn_for_game()).as_markup()
         )
@@ -193,7 +201,7 @@ async def game_mode(message: types.Message, state: FSMContext) -> None:
         case "💡 Обратный перевод":
             game_mode_name = "reverse_translate"
 
-    await message.answer(text=f"Отлично, игра начинается {message.from_user.first_name}", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer(text=f"<b>Отлично</b>, игра начинается ⏱ {message.from_user.first_name}", reply_markup=types.ReplyKeyboardRemove(), parse_mode=ParseMode.HTML)
 
 
     if game_mode_name == "translate":
@@ -203,7 +211,7 @@ async def game_mode(message: types.Message, state: FSMContext) -> None:
             translate_in_russo=game_r.translate_in_russo
         )
 
-        await message.answer(f"Загаданное слово: <b>{game_state_translate.secret_word}</b>", parse_mode=ParseMode.HTML)
+        await message.answer(f"📦 Загаданное слово: <b>{game_state_translate.secret_word}</b>", parse_mode=ParseMode.HTML)
         await state.set_state(GameTranslates.word_translate)
     elif game_mode_name == "speed_translate":
         game_r = await game.get_words()
@@ -212,7 +220,7 @@ async def game_mode(message: types.Message, state: FSMContext) -> None:
             translate_in_russo=game_r.translate_in_russo
         )
 
-        await message.answer(f"Загаданное слово: <b>{game_state_translate.secret_word}</b>\n\nВремя на перевод: <b>5</b> секунд", parse_mode=ParseMode.HTML)
+        await message.answer(f"📦 Загаданное слово: <b>{game_state_translate.secret_word}</b>\n\nВремя на перевод: <b>5</b> секунд", parse_mode=ParseMode.HTML)
         gss.game_time = datetime.now()
         await state.set_state(GameSpeed.word_translate)
 
@@ -223,7 +231,7 @@ async def game_mode(message: types.Message, state: FSMContext) -> None:
             translate_in_russo=game_r.translate_in_russo
         )
 
-        await message.answer(f"Слово: {game_r.translate_in_russo}, переведи его..")
+        await message.answer(f"📦 Слово: {game_r.translate_in_russo}, переведи его..")
         await state.set_state(GameReverseTranslate.word_translate)
 
 
@@ -238,12 +246,12 @@ async def delete_profile_user(clb: types.CallbackQuery):
         req_del: bool = await UserApi().delete_profile()
 
         if req_del:
-            await clb.answer(text="Ваш профиль был удалён")
+            await clb.answer(text="✅ Ваш профиль был удалён")
         else:
-            await clb.answer(text="Не удалось удалить профиль")
+            await clb.answer(text="❌ Не удалось удалить профиль")
     else:
         await clb.message.delete()
-        await clb.answer(text="Отмена операции удаления профиля")
+        await clb.answer(text="❗ Отмена операции удаления профиля")
 
 
 @message_router.message()
@@ -252,4 +260,4 @@ async def all_other_message(message: types.Message) -> None:
     Proccessing other message from user
     """
 
-    await message.answer(text="Не понимаю ваш запрос")
+    await message.answer(text="♾ Не понимаю ваш <i>запрос</i>")

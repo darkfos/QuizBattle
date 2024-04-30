@@ -43,3 +43,20 @@ class GameAPI:
             return list(req.json())
         else:
             return []
+        
+    async def get_rank_user(self) -> dict:
+
+        await UserApi().generate_new_token()
+
+        req = self.session_req.get(
+            url=self.api_url+"game/top_rank",
+            params={
+                "token": user_auth_set.token
+            }
+        )
+
+        if req.status_code == 200:
+            return dict(req.json())
+        else:
+            "Отсутствует"
+        

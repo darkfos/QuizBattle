@@ -185,7 +185,8 @@ class UserAPIService:
     @staticmethod
     async def get_all_users_order_by_score(
         session: AsyncSession,
-        token: GetAccessToken
+        token: GetAccessToken,
+        flag: bool = False
     ) -> Union[List, List[StatsUser]]:
         
         #Get user id
@@ -194,15 +195,25 @@ class UserAPIService:
         await security_app.user_is_created(telegram_id=data_from_token.get("tg_id"), session=session)
 
         all_users: tuple = await UserDatabaseService.get_all_records_order_score(session=session)
-        if len(all_users) > 0:
-            all_users: List[StatsUser] = [
-                StatsUser(
-                    user_name=user[0].name_user,
-                    score=user[0].score
-                )
-                    for user in all_users
-            ]
 
-            return all_users
+        if flag is False:
+            if len(all_users) > 0:
+                all_users: List[StatsUser] = [
+                    StatsUser(
+                        user_name=user[0].name_user,
+                        score=user[0].score
+                    )
+                        for user in all_users
+                ]
+
+                return all_users
+            else:
+                return []
         else:
-            return []
+            cont_rank: int = 1
+            for usr in all_users:
+                if usr[0].id == data_from_token.get("user_id"):
+                    return {"user_rank": cont_rank}
+                cont_rank += 1
+            
+            return {"user_rank": "Вы не числитесь в рейтинге"}

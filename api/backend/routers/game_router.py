@@ -36,8 +36,20 @@ async def random_word(
                  response_model=Union[List, List[StatsUser]])
 async def get_stats_about_all_users(
     session: Annotated[AsyncSession, Depends(db_worker.get_session)],
-    token: str
+    token: str,
 ) -> Union[List, List[StatsUser]]:
     
     res = await UserAPIService().get_all_users_order_by_score(session=session, token=token)
+    return res
+
+
+@game_router.get("/top_rank",
+                 status_code=status.HTTP_200_OK)
+async def get_user_rank(
+    session: Annotated[AsyncSession, Depends(db_worker.get_session)],
+    token: str
+) -> dict:
+    
+    res = await UserAPIService().get_all_users_order_by_score(session=session, token=token, flag=True)
+
     return res

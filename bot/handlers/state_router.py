@@ -40,16 +40,16 @@ async def translate_speed_word(message: types.Message, state: FSMContext) -> Non
             gss.right_word = gss.right_word + 1
             gss.score = gss.score + 15
             await message.answer(text="Отлично, ты получил 15 поинтов 🏆!")
-            await message.answer(text=f"Поздравляю {message.from_user.first_name}, ты правильно перевёл слово!\n\nЖелаешь продолжить?",
+            await message.answer(text=f"📣 Поздравляю {message.from_user.first_name}, ты правильно перевёл слово!\n\nЖелаешь продолжить?",
                                 reply_markup=await generate_btn_for_game_speed_translate())
         else:
             gss.lose_word = gss.lose_word + 1
-            await message.answer(text="К сожалению вы не успели перевести на скорость слово, желаете повторить?",
+            await message.answer(text="🔥 К сожалению вы не успели перевести на скорость слово, желаете повторить?",
                              reply_markup=await generate_btn_for_game_speed_translate())
 
     else:
         gss.lose_word = gss.lose_word + 1
-        await message.answer(text="К сожалению ваш перевод оказался неверным..\n\nЖелаете продолжить?",
+        await message.answer(text="🔥 К сожалению ваш перевод оказался неверным..\n\nЖелаете продолжить?",
                              reply_markup=await generate_btn_for_game_speed_translate())
         
 
@@ -72,12 +72,12 @@ async def translate_word(message: types.Message, state: FSMContext) -> None:
         gss.right_word = gss.right_word + 1
         gss.score = gss.score + 5
         await message.answer(text="Отлично, ты получил 5 поинтов 🏆!")
-        await message.answer(text=f"Поздравляю {message.from_user.first_name}, ты правильно перевёл слово!\n\nЖелаешь продолжить?",
+        await message.answer(text=f"📣 Поздравляю {message.from_user.first_name}, ты правильно перевёл слово!\n\nЖелаешь продолжить?",
                               reply_markup=await generate_btn_for_game_translate())
 
     else:
         gss.lose_word = gss.lose_word + 1
-        await message.answer(text="К сожалению ваш перевод оказался неверным..\n\nЖелаете продолжить?",
+        await message.answer(text="🔥 К сожалению ваш перевод оказался неверным..\n\nЖелаете продолжить?",
                              reply_markup=await generate_btn_for_game_translate())
 
 
@@ -99,12 +99,12 @@ async def translate_word(message: types.Message, state: FSMContext) -> None:
         gss.right_word = gss.right_word + 1
         gss.score = gss.score + 5
         await message.answer(text="Отлично, ты получил 5 поинтов 🏆!")
-        await message.answer(text=f"Поздравляю {message.from_user.first_name}, ты правильно перевёл слово!\n\nЖелаешь продолжить?",
+        await message.answer(text=f"📣 Поздравляю {message.from_user.first_name}, ты правильно перевёл слово!\n\nЖелаешь продолжить?",
                               reply_markup=await generate_btn_for_game_reverse_translate())
 
     else:
         gss.lose_word = gss.lose_word + 1
-        await message.answer(text="К сожалению ваш перевод оказался неверным..\n\nЖелаете продолжить?",
+        await message.answer(text="🔥 К сожалению ваш перевод оказался неверным..\n\nЖелаете продолжить?",
                              reply_markup=await generate_btn_for_game_reverse_translate())
 
 @state_router.message(CreateReview.message)
@@ -127,13 +127,13 @@ async def get_message_review_from_user(
 
         if save_req:
             await state.update_data(message=message.text)
-            await message.answer(text="Отлично, ваш отзыв был сохранён!")
+            await message.answer(text="✅ Отлично, ваш отзыв был сохранён!")
             await state.clear()
         else:
-            await message.answer(text="Не удалось сохранить ваш отзыв")
+            await message.answer(text="❌ Не удалось сохранить ваш отзыв")
             await state.clear()
     else:
-        await message.answer(text="Ожидается текст!")
+        await message.answer(text="❗ Ожидается текст!")
         await state.set_state(CreateReview.message)
 
 
@@ -156,11 +156,11 @@ async def change_user_name(
         )
 
         if req:
-            await message.answer(text="Ваше имя было успешно изменено")
+            await message.answer(text="✅ Ваше имя было <b>успешно</b> изменено", parse_mode=ParseMode.HTML)
         else:
-            await message.answer(text="Не удалось обновить ваше имя")
+            await message.answer(text="❌ <b>Не удалось</b> обновить ваше имя", parse_mode=ParseMode.HTML)
     else:
-        await message.answer(text="Имя должно быть текстом!")
+        await message.answer(text="❗ Имя должно быть текстом!")
         await state.set_state(ChangeUserName.user_name)
     
 
@@ -184,11 +184,11 @@ async def change_user_photo(
         req_status_code: bool = await UserApi().update_user_photo(data_update=user_data_for_update)
         
         if req_status_code:
-            await message.answer(text="Ваша фотография была успешно обновлена")
+            await message.answer(text="✅ Ваша фотография была <b>успешно</b> обновлена", parse_mode=ParseMode.HTML)
         else:
-            await message.answer(text="Не удалось обновить вашу фотографию")
+            await message.answer(text="❌ Не удалось обновить вашу фотографию", parse_mode=ParseMode.HTML)
 
         await state.clear()
     else:
-        await message.answer(text="Не удалось обновить вашу фотограцию")
+        await message.answer(text="❌ Не удалось обновить вашу фотограцию", parse_mode=ParseMode.HTML)
         await state.set_state(ChangeUserPhoto.photo)

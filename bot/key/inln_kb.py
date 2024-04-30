@@ -51,10 +51,7 @@ async def btn_for_game_country() -> InlineKeyboardBuilder.as_markup:
     btn_game_country.row(
         InlineKeyboardButton(
             text="🇬🇧 Английский (Британский)", callback_data="game_england_gmt"
-        )
-    )
-
-    btn_game_country.row(
+        ),
         InlineKeyboardButton(
             text="🇪🇸 Испанский", callback_data="game_spain_gmt"
         )
@@ -62,9 +59,32 @@ async def btn_for_game_country() -> InlineKeyboardBuilder.as_markup:
 
     btn_game_country.row(
         InlineKeyboardButton(
+            text="🇪🇸 Испанский", callback_data="game_spain_gmt"
+        ),
+        InlineKeyboardButton(
             text="🇩🇪 Немецкий", callback_data="game_germany_gmt"
         )
     )
+
+    btn_game_country.row(
+        InlineKeyboardButton(
+            text="🇫🇷 Французский", callback_data="game_franch_gmt"
+        ),
+        InlineKeyboardButton(
+            text="🇯🇵 Японский", callback_data="game_japanese_gmt"
+        )
+    )
+
+
+    btn_game_country.row(
+        InlineKeyboardButton(
+            text="🇫🇮 Финский", callback_data="game_finnish_gmt"
+        ),
+        InlineKeyboardButton(
+            text="🇳🇴 Норвежский", callback_data="game_norway_gmt"
+        )
+    )
+
 
     return btn_game_country.as_markup()
 
