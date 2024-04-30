@@ -18,6 +18,10 @@ class UserApi:
             Register a new user
         """
 
+        user_data.name_user.replace("<", "")
+        user_data.name_user.replace(">", "")
+        user_data.name_user.replace("/", "")
+
         result = self.session_req.post(
             url=self.url+"user/create_user",
             data=user_data.model_dump_json()

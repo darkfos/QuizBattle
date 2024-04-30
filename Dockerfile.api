@@ -8,8 +8,6 @@ WORKDIR /tg_app
 COPY . /tg_app
 
 # Install any needed dependencies specified in requirements.txt
-RUN apt-get update && \
-    apt install -y python3-dev
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Define environment variable
