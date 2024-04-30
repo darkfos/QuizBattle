@@ -18,9 +18,9 @@ class UserApi:
             Register a new user
         """
 
-        user_data.name_user.replace("<", "")
-        user_data.name_user.replace(">", "")
-        user_data.name_user.replace("/", "")
+        user_data.name_user = user_data.name_user.replace("<", "")
+        user_data.name_user = user_data.name_user.replace(">", "")
+        user_data.name_user = user_data.name_user.replace("/", "")
 
         result = self.session_req.post(
             url=self.url+"user/create_user",

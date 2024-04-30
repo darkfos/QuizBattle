@@ -147,18 +147,28 @@ async def change_user_name(
     """
 
     if message.content_type == "text":
+        new_user_name: str = message.text
+
+        new_user_name = new_user_name.replace("<", "")
+        new_user_name = new_user_name.replace(">", "")
+        new_user_name = new_user_name.replace("/", "")
+        new_user_name = new_user_name.replace("\\", "")
+
+        
         req = await UserApi().update_user_name(
             data_update=UpdateUserInfoPDSchema(
                 token=user_auth_set.token,
-                name_user=str(message.text),
+                name_user=new_user_name,
                 date_update=datetime.now().date()
             )
         )
 
         if req:
             await message.answer(text="✅ Ваше имя было <b>успешно</b> изменено", parse_mode=ParseMode.HTML)
+            await state.clear()
         else:
             await message.answer(text="❌ <b>Не удалось</b> обновить ваше имя", parse_mode=ParseMode.HTML)
+            await state.clear()
     else:
         await message.answer(text="❗ Имя должно быть текстом!")
         await state.set_state(ChangeUserName.user_name)
