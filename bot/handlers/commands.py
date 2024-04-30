@@ -122,3 +122,31 @@ async def game_options(message: types.Message, state: FSMContext):
     )
     
     await state.set_state(Game.language)
+
+
+@command_router.message(Command("country_information"))
+async def country_information(message: types.Message):
+    """
+    Send basic information about country
+    """
+
+    await message.answer_animation(animation=FSInputFile("bot/static/country.gif")
+        caption="Краткая информация об каждой стране...")
+    
+
+    dct_country: dict = {
+        0: "🇬🇧 Великобритании",
+        1: "🇪🇸 Испании",
+        2: "🇩🇪 Германии",
+        3: "🇫🇷 Франции",
+        4: "🇯🇵 Японии",
+        5: "🇫🇮 Финляндии",
+        6: "🇳🇴 Норвегии"
+    }
+
+
+    for i in range(7):
+        message_txt_about_country = f"Краткий перечень об {dct_country.get(i)}"
+        await message.answer(
+
+        )   
