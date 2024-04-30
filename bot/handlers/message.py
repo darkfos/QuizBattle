@@ -260,4 +260,4 @@ async def all_other_message(message: types.Message) -> None:
     Proccessing other message from user
     """
 
-    await message.answer(text="♾ Не понимаю ваш <i>запрос</i>")
+    await message.answer(text="♾ Не понимаю ваш <i>запрос</i>", parse_mode=ParseMode.HTML)

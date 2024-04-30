@@ -8,10 +8,13 @@ WORKDIR /tg_app
 COPY . /tg_app
 
 # Install any needed dependencies specified in requirements.txt
+RUN apt-get update && \
+    apt install -y python3-dev
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Define environment variable
 ENV NAME .env
 
-# Run app.py when the container launches
-CMD ["python", "main.py"]
+EXPOSE 8000
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

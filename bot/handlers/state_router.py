@@ -36,7 +36,7 @@ async def translate_speed_word(message: types.Message, state: FSMContext) -> Non
 
         if abs(int(time_quest)) <= 5:
             #Update user score
-            await UserApi().update_user_score(score=5)
+            await UserApi().update_user_score(score=15)
             gss.right_word = gss.right_word + 1
             gss.score = gss.score + 15
             await message.answer(text="Отлично, ты получил 15 поинтов 🏆!")
@@ -109,31 +109,31 @@ async def translate_word(message: types.Message, state: FSMContext) -> None:
 
 @state_router.message(CreateReview.message)
 async def get_message_review_from_user(
-    message: types.Message,
+    message_from_user: types.Message,
     state: FSMContext
 ) -> None:
     """
     Create review
     """
 
-    if message.content_type == "text":
+    if message_from_user.content_type == "text":
         #Save review
         save_req = await ReviewAPI().create_review(
             new_review=AddNewReviewPDSchema(
-                message=message.text,
-                token=user_auth_set.token
+                message=str(message_from_user.text),
+                token=str(user_auth_set.token)
             )
         )
 
         if save_req:
-            await state.update_data(message=message.text)
-            await message.answer(text="✅ Отлично, ваш отзыв был сохранён!")
+            await state.update_data(message=message_from_user.text)
+            await message_from_user.answer(text="✅ Отлично, ваш отзыв был сохранён!")
             await state.clear()
         else:
-            await message.answer(text="❌ Не удалось сохранить ваш отзыв")
+            await message_from_user.answer(text="❌ Не удалось сохранить ваш отзыв")
             await state.clear()
     else:
-        await message.answer(text="❗ Ожидается текст!")
+        await message_from_user.answer(text="❗ Ожидается текст!")
         await state.set_state(CreateReview.message)
 
 

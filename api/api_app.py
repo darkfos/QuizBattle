@@ -41,11 +41,3 @@ app.include_router(
 @app.get("/", status_code=status.HTTP_100_CONTINUE)
 async def redirect_to_docs():
     return RedirectResponse("/docs")
-
-
-def start_api_application():
-    #Start api app
-    uvicorn.run(
-        app=app,
-        workers=True
-    )

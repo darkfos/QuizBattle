@@ -26,6 +26,7 @@ async def create_new_review_by_user(
 
     return await ReviewAPIService.add_new_review(session=session, new_review=new_review)
 
+
 @review_router.get("/all_review_by_user",
                    status_code=status.HTTP_200_OK,
                    response_model=Union[List, List[GetReviewPDSchema]])

@@ -25,7 +25,10 @@ class ReviewAPI:
     
         req = self.session_req.post(
             url=self.url + "review/add_new_review",
-            data=new_review.model_dump_json()
+            json={
+                "token": new_review.token,
+                "message": new_review.message
+            }
         )
 
         if req.status_code == 201:

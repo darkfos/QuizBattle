@@ -18,6 +18,7 @@ class UserDatabaseService(CRUDRepository):
             await session.commit()
             return True
         except Exception as ex:
+            print(ex)
             return False
         finally:
             await session.close()
