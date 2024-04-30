@@ -20,15 +20,18 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from api.db.db_engine import MainBase
+from api.db.models.HistoryTable import History
+from api.db.models.ReviewTable import Review
+from api.db.models.UserTable import User
+from api.db.decl_base import MainBase
 target_metadata = MainBase.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
-# ... etc.
 from app_settings import db_settings
 config.set_main_option("sqlalchemy.url", db_settings.url_db)
+# ... etc.
 
 
 def run_migrations_offline() -> None:

@@ -172,7 +172,7 @@ async def language_sel(message: types.CallbackQuery, state: FSMContext) -> None:
         case "game_finnish_gmt":
             country_name = "fi"
         case "game_norway_gmt":
-            country_name = "no"
+            country_name = "de"
 
     #Set country name
     game.code = country_name

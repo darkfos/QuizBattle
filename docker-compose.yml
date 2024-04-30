@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "quickapp"
+      POSTGRES_USER: "darkfos"
+      POSTGRES_PASSWORD: "7709"
+    ports:
+      - "5455:5455"
+    restart: always
+    networks:
+      - my_network
+  api:
+    container_name: api
+    build: 
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "8734:8734"
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    networks:
+      - my_network
+  tg_bot:
+    container_name: tg_bot
+    build: 
+      context: .
+      dockerfile: Dockerfile.bot
+    ports:
+      - "8293:8293"
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - api
+    networks:
+      - my_network
+
+networks:
+  my_network:

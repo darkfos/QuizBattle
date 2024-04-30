@@ -1,8 +1,8 @@
-"""Creating tables, fix
+"""tables db
 
-Revision ID: e23aa57201ac
-Revises: 5ab1bc6d9b8f
-Create Date: 2024-04-27 01:08:22.259768
+Revision ID: b0e35e11db39
+Revises: 04fe571888ff
+Create Date: 2024-04-30 04:50:19.992137
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "e23aa57201ac"
-down_revision: Union[str, None] = "5ab1bc6d9b8f"
+revision: str = "b0e35e11db39"
+down_revision: Union[str, None] = "04fe571888ff"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -25,11 +25,14 @@ def upgrade() -> None:
         "user_table",
         sa.Column("telegram_id", sa.BigInteger(), nullable=False),
         sa.Column("name_user", sa.String(length=500), nullable=False),
+        sa.Column("photo", sa.TEXT(), nullable=True),
         sa.Column("score", sa.Integer(), nullable=False),
+        sa.Column("game_count", sa.Integer(), nullable=True),
         sa.Column("date_create", sa.Date(), nullable=False),
         sa.Column("date_update", sa.Date(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("telegram_id"),
     )
     op.create_table(
         "history_table",
@@ -40,8 +43,7 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["user_id"],
-            ["user_table.id"],
+            ["user_id"], ["user_table.id"], ondelete="CASCADE"
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -51,8 +53,7 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["user_id"],
-            ["user_table.id"],
+            ["user_id"], ["user_table.id"], ondelete="CASCADE"
         ),
         sa.PrimaryKeyConstraint("id"),
     )
