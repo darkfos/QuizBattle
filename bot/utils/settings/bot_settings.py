@@ -20,7 +20,8 @@ async def set_commands_for_bot(bot: Bot) -> None:
                 BotCommand(command="profile", description="Мой профиль"),
                 BotCommand(command="stats", description="Мировая статистика"),
                 BotCommand(command="review", description="Оставить отзыв"),
-                BotCommand(command="clear", description="Очистить память")
+                BotCommand(command="clear", description="Очистить память"),
+                BotCommand(command="country_information", description="Информация о стране")
         ]
     ))
 
